@@ -1,52 +1,54 @@
-export default function Home() {
-  const events = [
-    {
-      title: "USIU-Africa Half Marathon",
-      category: "Sports",
-      date: "July 26, 2026",
-      time: "6:00 AM",
-      venue: "USIU-Africa Campus",
-      price: "KES 1,700",
-      color: "bg-blue-100 text-blue-700",
-    },
-    {
-      title: "Africa Day 2026",
-      category: "Cultural",
-      date: "May 21, 2026",
-      time: "9:00 AM",
-      venue: "Nairobi, Kenya",
-      price: "Free",
-      color: "bg-yellow-100 text-yellow-700",
-    },
-    {
-      title: "11th Criminology & Criminal Justice Conference",
-      category: "Academic",
-      date: "July 30, 2026",
-      time: "9:00 AM",
-      venue: "USIU-Africa Campus",
-      price: "Free",
-      color: "bg-red-100 text-red-700",
-    },
-    {
-      title: "4th Accountability in African Public Policy",
-      category: "Academic",
-      date: "July 15, 2026",
-      time: "8:00 AM",
-      venue: "Nairobi, Kenya",
-      price: "150 – 200 USD",
-      color: "bg-red-100 text-red-700",
-    },
-    {
-      title: "Workshop on Kenyan Indigenous Languages",
-      category: "Workshop",
-      date: "May 29, 2026",
-      time: "9:00 AM",
-      venue: "USIU-Africa Campus",
-      price: "Free",
-      color: "bg-green-100 text-green-700",
-    },
-  ];
+import EventCard from "./components/EventCard"
 
+const events = [
+  {
+    title: "USIU-Africa Half Marathon",
+    category: "Sports",
+    date: "July 26, 2026",
+    time: "6:00 AM",
+    venue: "USIU-Africa Campus",
+    price: "KES 1,700",
+    color: "bg-blue-100 text-blue-700",
+  },
+  {
+    title: "Africa Day 2026",
+    category: "Cultural",
+    date: "May 21, 2026",
+    time: "9:00 AM",
+    venue: "Nairobi, Kenya",
+    price: "Free",
+    color: "bg-yellow-100 text-yellow-700",
+  },
+  {
+    title: "11th Criminology & Criminal Justice Conference",
+    category: "Academic",
+    date: "July 30, 2026",
+    time: "9:00 AM",
+    venue: "USIU-Africa Campus",
+    price: "Free",
+    color: "bg-red-100 text-red-700",
+  },
+  {
+    title: "4th Accountability in African Public Policy",
+    category: "Academic",
+    date: "July 15, 2026",
+    time: "8:00 AM",
+    venue: "Nairobi, Kenya",
+    price: "150 – 200 USD",
+    color: "bg-red-100 text-red-700",
+  },
+  {
+    title: "Workshop on Kenyan Indigenous Languages",
+    category: "Workshop",
+    date: "May 29, 2026",
+    time: "9:00 AM",
+    venue: "USIU-Africa Campus",
+    price: "Free",
+    color: "bg-green-100 text-green-700",
+  },
+]
+
+export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50">
 
@@ -59,10 +61,10 @@ export default function Home() {
           <h1 className="text-white text-lg font-bold">CampusTickets</h1>
         </div>
         <div className="flex gap-4">
-          <button className="text-blue-200 hover:text-white text-sm">Log in</button>
-          <button className="bg-[#BF0A30] text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700">
+          <a href="/login" className="text-blue-200 hover:text-white text-sm">Log in</a>
+          <a href="/signup" className="bg-[#BF0A30] text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700">
             Sign up
-          </button>
+          </a>
         </div>
       </nav>
 
@@ -103,25 +105,7 @@ export default function Home() {
         <h3 className="text-xl font-semibold text-gray-700 mb-6">Upcoming Events</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {events.map((event, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow"
-            >
-              <div className={`text-xs font-medium px-3 py-1 rounded-full w-fit mb-3 ${event.color}`}>
-                {event.category}
-              </div>
-              <h4 className="font-semibold text-gray-800 mb-2 leading-snug">
-                {event.title}
-              </h4>
-              <p className="text-sm text-gray-500 mb-1">📅 {event.date} · {event.time}</p>
-              <p className="text-sm text-gray-500 mb-4">📍 {event.venue}</p>
-              <div className="flex items-center justify-between">
-                <span className="text-[#002868] font-bold">{event.price}</span>
-                <button className="bg-[#BF0A30] text-white text-sm px-4 py-1.5 rounded-lg hover:bg-red-700">
-                  Get Ticket
-                </button>
-              </div>
-            </div>
+            <EventCard key={index} {...event} />
           ))}
         </div>
       </section>
@@ -132,5 +116,5 @@ export default function Home() {
       </footer>
 
     </main>
-  );
+  )
 }
