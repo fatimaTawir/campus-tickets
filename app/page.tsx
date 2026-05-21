@@ -75,17 +75,18 @@ export default async function Home() {
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {events.map((event) => (
-            <EventCard
-              key={event.id}
-              title={event.title}
-              category={event.category}
-              date={event.date}
-              time={event.time}
-              venue={event.venue}
-              price={event.price}
-              color={categoryColors[event.category] || "bg-gray-100 text-gray-700"}
-            />
-          ))}
+  <EventCard
+    key={event.id}
+    id={event.id}
+    title={event.title}
+    category={event.category}
+    date={event.date}
+    time={event.time}
+    venue={event.venue}
+    price={event.price}
+    color={categoryColors[event.category] || "bg-gray-100 text-gray-700"}
+  />
+))}
         </div>
       </section>
 
