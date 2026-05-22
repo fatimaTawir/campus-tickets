@@ -35,6 +35,9 @@ export default async function DashboardPage() {
         </div>
         <div className="flex items-center gap-4">
           <span className="text-blue-200 text-sm">Hi, {user.firstName}!</span>
+          <Link href="/analytics" className="text-blue-200 hover:text-white text-sm">
+            Analytics
+          </Link>
           <Link
             href="/api/auth/logout"
             className="bg-[#BF0A30] text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700"
