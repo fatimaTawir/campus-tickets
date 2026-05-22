@@ -1,6 +1,7 @@
 import Link from "next/link"
 import EventCard from "./components/EventCard"
 import pool from "./lib/db"
+export const dynamic = 'force-dynamic'
 
 const categoryColors: { [key: string]: string } = {
   Sports: "bg-blue-100 text-blue-700",

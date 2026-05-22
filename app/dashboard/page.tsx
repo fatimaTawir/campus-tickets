@@ -102,7 +102,9 @@ export default async function DashboardPage() {
               {tickets.map((ticket: any) => (
                 <div key={ticket.id} className="border border-gray-200 rounded-xl p-4 flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-gray-800">{ticket.title}</p>
+                    <Link href={`/tickets/${ticket.id}`} className="font-medium text-gray-800 hover:text-[#002868] hover:underline">
+  {ticket.title}
+</Link>
                     <p className="text-sm text-gray-500">📍 {ticket.venue} · 📅 {ticket.date}</p>
                   </div>
                   <div className="flex items-center gap-3">
