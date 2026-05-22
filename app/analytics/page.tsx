@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import pool from '@/app/lib/db'
 import AnalyticsCharts from '@/app/components/AnalyticsCharts'
+export const dynamic = 'force-dynamic'
 
 export default async function AnalyticsPage() {
   const user = await getCurrentUser()

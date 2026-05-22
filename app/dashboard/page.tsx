@@ -2,7 +2,7 @@ import { getCurrentUser } from '@/app/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import pool from '@/app/lib/db'
-
+export const dynamic = 'force-dynamic'
 export default async function DashboardPage() {
   const user = await getCurrentUser()
 
