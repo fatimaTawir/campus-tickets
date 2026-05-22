@@ -4,18 +4,15 @@ import Link from 'next/link'
 import pool from '@/app/lib/db'
 
 export default async function DashboardPage() {
-  // Check if user is logged in
   const user = await getCurrentUser()
 
-  // If not logged in send them to login page
   if (!user) {
     redirect('/login')
   }
 
-  // Get their tickets from database
   const ticketsResult = await pool.query(
     `SELECT t.id, t.qr_code, t.payment_status, t.created_at,
-            e.title, e.venue, e.date, e.time
+            e.title, e.venue, e.date, e.time, e.price_amount
      FROM tickets t
      JOIN events e ON t.event_id = e.id
      WHERE t.user_id = $1
@@ -105,13 +102,23 @@ export default async function DashboardPage() {
                     <p className="font-medium text-gray-800">{ticket.title}</p>
                     <p className="text-sm text-gray-500">📍 {ticket.venue} · 📅 {ticket.date}</p>
                   </div>
-                  <span className={`text-xs font-medium px-3 py-1 rounded-full ${
-                    ticket.payment_status === 'paid'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-yellow-100 text-yellow-700'
-                  }`}>
-                    {ticket.payment_status}
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <span className={`text-xs font-medium px-3 py-1 rounded-full ${
+                      ticket.payment_status === 'paid'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-yellow-100 text-yellow-700'
+                    }`}>
+                      {ticket.payment_status}
+                    </span>
+                    {ticket.payment_status === 'pending' && (
+                      <Link
+                        href={`/pay/${ticket.id}`}
+                        className="bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-green-700"
+                      >
+                        Pay Now
+                      </Link>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
