@@ -19,7 +19,7 @@ export default async function DashboardPage() {
      JOIN events e ON t.event_id = e.id
      WHERE t.user_id = $1
      ORDER BY t.created_at DESC`,
-    [user.userId]
+    [Number(user.userId)]
   ).catch(() => ({ rows: [] }))
 
   const tickets = ticketsResult.rows
