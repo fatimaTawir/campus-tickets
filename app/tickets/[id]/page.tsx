@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import pool from '@/app/lib/db'
 import QRTicket from '@/app/components/QRTicket'
-
+import DownloadTicketButton from '@/app/components/DownloadTicketButton'
 export const dynamic = 'force-dynamic'
 
 export default async function TicketPage({ params }: { params: Promise<{ id: string }> }) {
@@ -139,23 +139,34 @@ export default async function TicketPage({ params }: { params: Promise<{ id: str
           paymentStatus={ticket.payment_status}
         />
 
-        {/* Action buttons */}
-        <div className="flex flex-col gap-3 mt-6">
-          {ticket.payment_status === 'pending' && (
-            <Link
-              href={`/pay/${ticket.id}`}
-              className="bg-green-600 text-white text-center py-3 rounded-xl text-sm font-medium hover:bg-green-700"
-            >
-              💳 Pay Now
-            </Link>
-          )}
-          <Link
-            href="/dashboard"
-            className="bg-[#002868] text-white text-center py-3 rounded-xl text-sm font-medium hover:bg-blue-900"
-          >
-            Back to Dashboard
-          </Link>
-        </div>
+       {/* Action buttons */}
+<div className="flex flex-col gap-3 mt-6">
+  {ticket.payment_status === 'paid' && (
+    <DownloadTicketButton
+      ticketId={ticket.id}
+      eventTitle={ticket.title}
+      eventDate={`${ticket.date} · ${ticket.time}`}
+      eventVenue={ticket.venue}
+      studentName={`${ticket.first_name} ${ticket.last_name}`}
+      qrCode={ticket.qr_code}
+      bookingRef={bookingRef}
+    />
+  )}
+  {ticket.payment_status === 'pending' && (
+    <Link
+      href={`/pay/${ticket.id}`}
+      className="bg-green-600 text-white text-center py-3 rounded-xl text-sm font-medium hover:bg-green-700"
+    >
+      💳 Pay Now
+    </Link>
+  )}
+  <Link
+    href="/dashboard"
+    className="bg-[#002868] text-white text-center py-3 rounded-xl text-sm font-medium hover:bg-blue-900"
+  >
+    Back to Dashboard
+  </Link>
+</div>
 
       </div>
     </main>
