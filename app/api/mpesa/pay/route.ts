@@ -81,17 +81,13 @@ export async function POST(request: NextRequest) {
 
     const stkData = await stkResponse.json()
 
-    if (stkData.ResponseCode === '0') {
-      return NextResponse.json({
-        message: 'STK push sent! Check your phone and enter your M-Pesa PIN.',
-        checkoutRequestId: stkData.CheckoutRequestID,
-      })
-    } else {
-      return NextResponse.json(
-        { error: 'Payment request failed. Try again.' },
-        { status: 400 }
-      )
-    }
+   } else {
+  console.error('STK push failed:', JSON.stringify(stkData))
+  return NextResponse.json(
+    { error: `Payment failed: ${stkData.errorMessage || stkData.ResultDesc || 'Unknown error'}` },
+    { status: 400 }
+  )
+}
 
   } catch (error) {
     console.error('M-Pesa error:', error)
