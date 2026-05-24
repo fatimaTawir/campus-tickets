@@ -2,7 +2,9 @@ import { getCurrentUser } from '@/app/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import pool from '@/app/lib/db'
+
 export const dynamic = 'force-dynamic'
+
 export default async function DashboardPage() {
   const user = await getCurrentUser()
 
@@ -35,8 +37,22 @@ export default async function DashboardPage() {
         </div>
         <div className="flex items-center gap-4">
           <span className="text-blue-200 text-sm">Hi, {user.firstName}!</span>
+          <Link href="/" className="text-blue-200 hover:text-white text-sm">
+            Events
+          </Link>
           <Link href="/analytics" className="text-blue-200 hover:text-white text-sm">
             Analytics
+          </Link>
+          {(user.role === 'organizer' || user.role === 'admin') && (
+            <Link href="/organizer" className="text-blue-200 hover:text-white text-sm">
+              Organizer
+            </Link>
+          )}
+          <Link href="/about" className="text-blue-200 hover:text-white text-sm">
+            About
+          </Link>
+          <Link href="/help" className="text-blue-200 hover:text-white text-sm">
+            Help
           </Link>
           <Link
             href="/api/auth/logout"
@@ -103,8 +119,8 @@ export default async function DashboardPage() {
                 <div key={ticket.id} className="border border-gray-200 rounded-xl p-4 flex items-center justify-between">
                   <div>
                     <Link href={`/tickets/${ticket.id}`} className="font-medium text-gray-800 hover:text-[#002868] hover:underline">
-  {ticket.title}
-</Link>
+                      {ticket.title}
+                    </Link>
                     <p className="text-sm text-gray-500">📍 {ticket.venue} · 📅 {ticket.date}</p>
                   </div>
                   <div className="flex items-center gap-3">

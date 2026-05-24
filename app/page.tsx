@@ -56,7 +56,10 @@ export default async function Home({
           </div>
           <h1 className="text-white text-lg font-bold">CampusTickets</h1>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
+          <Link href="/about" className="text-blue-200 hover:text-white text-sm">About</Link>
+          <Link href="/help" className="text-blue-200 hover:text-white text-sm">Help</Link>
+          <Link href="/organizer" className="text-blue-200 hover:text-white text-sm">Organizer</Link>
           <Link href="/login" className="text-blue-200 hover:text-white text-sm">Log in</Link>
           <Link href="/signup" className="bg-[#BF0A30] text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700">
             Sign up

@@ -15,6 +15,7 @@ export default function SearchBar() {
     }
   }
 
+
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === 'Enter') handleSearch()
   }
