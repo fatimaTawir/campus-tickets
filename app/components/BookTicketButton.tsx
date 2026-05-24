@@ -44,13 +44,13 @@ export default function BookTicketButton({ eventId, eventTitle, price, priceAmou
 
       const ticketId = data.ticket.id
 
-      // If free event go to ticket page
-      if (priceAmount === 0) {
-        router.push(`/tickets/${ticketId}`)
-      } else {
-        // If paid event go to payment page
-        router.push(`/pay/${ticketId}`)
-      }
+      
+     // Always go to booking confirmed page first
+if (priceAmount === 0) {
+  router.push(`/booking-confirmed/${ticketId}`)
+} else {
+  router.push(`/pay/${ticketId}`)
+}
 
     } catch (err) {
       setError("Something went wrong. Please try again.")
