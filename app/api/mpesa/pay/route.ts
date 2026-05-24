@@ -6,7 +6,7 @@ async function getMpesaToken() {
   ).toString('base64')
 
   const response = await fetch(
-    'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
+    'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
     {
       method: 'GET',
       headers: { 
