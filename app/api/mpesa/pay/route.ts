@@ -8,18 +8,27 @@ async function getMpesaToken() {
   const response = await fetch(
     'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
     {
-      headers: { Authorization: `Basic ${auth}` },
-      signal: AbortSignal.timeout(10000),
+      method: 'GET',
+      headers: { 
+        Authorization: `Basic ${auth}`,
+        'Content-Type': 'application/json',
+      },
     }
   )
 
   const text = await response.text()
+  console.log('Token response:', text)
 
-  if (!text) {
-    throw new Error('Empty response from Safaricom. Sandbox may be unavailable.')
+  if (!text || text.trim() === '') {
+    throw new Error('Empty response from Safaricom token endpoint')
   }
 
   const data = JSON.parse(text)
+  
+  if (!data.access_token) {
+    throw new Error(`No access token in response: ${text}`)
+  }
+  
   return data.access_token
 }
 
@@ -42,7 +51,9 @@ export async function POST(request: NextRequest) {
       formattedPhone = formattedPhone.slice(1)
     }
 
+    console.log('Getting M-Pesa token...')
     const token = await getMpesaToken()
+    console.log('Token obtained successfully')
 
     const now = new Date()
     const timestamp = now.getFullYear().toString() +
@@ -55,6 +66,8 @@ export async function POST(request: NextRequest) {
     const shortcode = process.env.MPESA_SHORTCODE!
     const passkey = process.env.MPESA_PASSKEY!
     const password = Buffer.from(shortcode + passkey + timestamp).toString('base64')
+
+    console.log('Sending STK push to:', formattedPhone)
 
     const stkResponse = await fetch(
       'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest',
@@ -81,10 +94,11 @@ export async function POST(request: NextRequest) {
     )
 
     const stkText = await stkResponse.text()
-    
-    if (!stkText) {
+    console.log('STK response:', stkText)
+
+    if (!stkText || stkText.trim() === '') {
       return NextResponse.json(
-        { error: 'No response from Safaricom. Please try again.' },
+        { error: 'No response from Safaricom STK push' },
         { status: 500 }
       )
     }
