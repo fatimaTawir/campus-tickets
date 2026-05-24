@@ -55,10 +55,12 @@ export async function POST(request: NextRequest) {
     )
 
     if (existingTicket.rows.length > 0) {
-      return NextResponse.json(
-        { error: 'You already have a ticket for this event' },
-        { status: 400 }
-      )
+      // Return the existing ticket so user can pay
+      return NextResponse.json({
+        message: 'You already have a ticket for this event',
+        ticket: existingTicket.rows[0],
+        alreadyExists: true
+      }, { status: 200 })
     }
 
     // 6. Generate a unique QR code ID
@@ -84,7 +86,6 @@ export async function POST(request: NextRequest) {
     }, { status: 201 })
 
   } catch (error: any) {
-    // Handle duplicate ticket error from database
     if (error.code === '23505') {
       return NextResponse.json(
         { error: 'You already have a ticket for this event' },

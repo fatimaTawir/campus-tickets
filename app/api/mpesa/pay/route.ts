@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getCurrentUser } from '@/app/lib/auth'
 
 async function getMpesaToken() {
   const auth = Buffer.from(
@@ -19,15 +18,6 @@ async function getMpesaToken() {
 
 export async function POST(request: NextRequest) {
   try {
-    // 1. Check user is logged in
-    const user = await getCurrentUser()
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Please log in first' },
-        { status: 401 }
-      )
-    }
-
     // 2. Get payment details from request
     const { phone, amount, ticketId, eventTitle } = await request.json()
 
