@@ -44,8 +44,8 @@ export default function BookTicketButton({ eventId, eventTitle, price, priceAmou
 
       const ticketId = data.ticket.id
 
-      // Always go to booking confirmed page
-      if (priceAmount === 0) {
+      // Go to booking confirmed for free events, pay page for paid events
+      if (Number(priceAmount) === 0) {
         router.push(`/booking-confirmed/${ticketId}`)
       } else {
         router.push(`/pay/${ticketId}`)
