@@ -1,11 +1,13 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, Suspense } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectUrl = searchParams.get('redirect') || '/dashboard'
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [formData, setFormData] = useState({
@@ -44,8 +46,8 @@ export default function LoginPage() {
         return
       }
 
-      // Success — go to dashboard
-      router.push("/dashboard")
+      // Success — go to redirect URL or dashboard
+      router.push(redirectUrl)
 
     } catch (err) {
       setError("Something went wrong. Please try again.")
@@ -54,6 +56,64 @@ export default function LoginPage() {
     }
   }
 
+  return (
+    <div className="flex flex-col gap-4">
+
+      <div>
+        <label className="text-sm font-medium text-gray-700 block mb-1">
+          Email address
+        </label>
+        <input
+          type="email"
+          name="email"
+          placeholder="you@usiu.ac.ke"
+          value={formData.email}
+          onChange={handleChange}
+          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868]"
+        />
+      </div>
+
+      <div>
+        <label className="text-sm font-medium text-gray-700 block mb-1">
+          Password
+        </label>
+        <input
+          type="password"
+          name="password"
+          placeholder="••••••••"
+          value={formData.password}
+          onChange={handleChange}
+          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868]"
+        />
+      </div>
+
+      <div className="flex items-center justify-between text-sm">
+        <label className="flex items-center gap-2 text-gray-600">
+          <input type="checkbox" className="rounded" />
+          Remember me
+        </label>
+        <a href="#" className="text-[#002868] hover:underline">Forgot password?</a>
+      </div>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">
+          {error}
+        </div>
+      )}
+
+      <button
+        onClick={handleSubmit}
+        disabled={loading}
+        className="bg-[#002868] text-white w-full py-2.5 rounded-lg text-sm font-medium hover:bg-blue-900 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {loading ? "Logging in..." : "Log in"}
+      </button>
+
+    </div>
+  )
+}
+
+export default function LoginPage() {
   return (
     <main className="min-h-screen bg-gray-50 flex flex-col">
 
@@ -80,61 +140,9 @@ export default function LoginPage() {
             <p className="text-gray-500 text-sm mt-1">Log in to your CampusTickets account</p>
           </div>
 
-          {/* Error message */}
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-4">
-              {error}
-            </div>
-          )}
-
-          {/* Form */}
-          <div className="flex flex-col gap-4">
-
-            <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1">
-                Email address
-              </label>
-              <input
-                type="email"
-                name="email"
-                placeholder="you@usiu.ac.ke"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868]"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                name="password"
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868]"
-              />
-            </div>
-
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 text-gray-600">
-                <input type="checkbox" className="rounded" />
-                Remember me
-              </label>
-              <a href="#" className="text-[#002868] hover:underline">Forgot password?</a>
-            </div>
-
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className="bg-[#002868] text-white w-full py-2.5 rounded-lg text-sm font-medium hover:bg-blue-900 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "Logging in..." : "Log in"}
-            </button>
-
-          </div>
+          <Suspense fallback={<div>Loading...</div>}>
+            <LoginForm />
+          </Suspense>
 
           {/* Footer */}
           <p className="text-center text-sm text-gray-500 mt-6">

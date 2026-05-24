@@ -19,7 +19,7 @@ export default function BookTicketButton({ eventId, eventTitle, price, priceAmou
 
   async function handleBook() {
     if (!isLoggedIn) {
-      router.push('/login')
+      router.push(`/login?redirect=/events/${eventId}`)
       return
     }
 
@@ -44,13 +44,12 @@ export default function BookTicketButton({ eventId, eventTitle, price, priceAmou
 
       const ticketId = data.ticket.id
 
-      
-     // Always go to booking confirmed page first
-if (priceAmount === 0) {
-  router.push(`/booking-confirmed/${ticketId}`)
-} else {
-  router.push(`/pay/${ticketId}`)
-}
+      // Always go to booking confirmed page
+      if (priceAmount === 0) {
+        router.push(`/booking-confirmed/${ticketId}`)
+      } else {
+        router.push(`/pay/${ticketId}`)
+      }
 
     } catch (err) {
       setError("Something went wrong. Please try again.")
