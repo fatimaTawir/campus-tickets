@@ -46,7 +46,26 @@ export default function PayPage() {
         }
 
         setMessageType("success")
-        setMessage("STK push sent! Check your phone and enter your M-Pesa PIN.")
+        setMessage("STK push sent! Check your phone and enter your M-Pesa PIN. This page will update after payment.")
+
+        // Check payment status every 5 seconds for 60 seconds
+        let attempts = 0
+        const checkInterval = setInterval(async () => {
+          attempts++
+          try {
+            const checkRes = await fetch(`/api/tickets/status?ticketId=${ticketId}`)
+            const checkData = await checkRes.json()
+            if (checkData.status === 'paid') {
+              clearInterval(checkInterval)
+              router.push(`/tickets/${ticketId}`)
+            }
+          } catch (e) {
+            console.error('Status check error:', e)
+          }
+          if (attempts >= 12) {
+            clearInterval(checkInterval)
+          }
+        }, 5000)
 
       } else if (paymentMethod === "card") {
         setMessageType("success")
@@ -182,9 +201,6 @@ export default function PayPage() {
                 onChange={(e) => setPhone(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
               />
-              <p className="text-xs text-gray-400 mt-1">
-                Use 0708374149 for sandbox testing
-              </p>
             </div>
           )}
 
