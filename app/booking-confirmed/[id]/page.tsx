@@ -2,6 +2,7 @@ import { getCurrentUser } from '@/app/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import pool from '@/app/lib/db'
+import DownloadTicketButton from '@/app/components/DownloadTicketButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,84 +26,129 @@ export default async function BookingConfirmedPage({ params }: { params: Promise
   if (result.rows.length === 0) redirect('/dashboard')
 
   const ticket = result.rows[0]
-
-  // Generate booking reference from QR code
-  const bookingRef = ticket.qr_code.replace('USIU-', '').substring(0, 8).toUpperCase()
+  const bookingRef = `CETS-${ticket.qr_code.replace('USIU-', '').substring(0, 6).toUpperCase()}`
+  const initials = `${user.firstName?.[0] ?? ''}`.toUpperCase()
 
   return (
-    <main className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 flex">
 
-      {/* Navbar */}
-      <nav className="bg-[#002868] px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="bg-[#BF0A30] text-white text-xs font-bold px-2 py-1 rounded">
-            USIU-A
-          </div>
-          <Link href="/" className="text-white text-lg font-bold">CampusTickets</Link>
+      {/* Sidebar */}
+      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col min-h-screen fixed left-0 top-0 z-10">
+        <div className="px-6 py-5 border-b border-gray-100">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-[#002868] rounded-lg flex items-center justify-center">
+              <span className="text-[#f0b429] text-xs font-bold">CT</span>
+            </div>
+            <span className="font-bold text-gray-800">CampusTickets</span>
+          </Link>
         </div>
-      </nav>
-
-      <div className="flex flex-1 items-center justify-center px-4 py-16">
-        <div className="bg-white rounded-2xl border border-gray-200 p-8 w-full max-w-md text-center">
-
-          {/* Success icon */}
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-3xl">✅</span>
+        <div className="px-6 py-4 border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#002868] rounded-full flex items-center justify-center text-white font-bold text-sm">
+              {initials}
+            </div>
+            <div>
+              <p className="font-semibold text-gray-800 text-sm">{user.firstName}</p>
+              <p className="text-xs text-gray-400 capitalize">{user.role}</p>
+            </div>
           </div>
+        </div>
+        <nav className="flex-1 px-4 py-4">
+          <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold mb-3 px-2">Menu</p>
+          <div className="flex flex-col gap-1">
+            <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
+              <span>🏠</span> Dashboard
+            </Link>
+            <Link href="/" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
+              <span>🎫</span> Browse events
+            </Link>
+            <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#002868] text-white text-sm font-medium">
+              <span>🎟️</span> My tickets
+            </Link>
+            <Link href="/help" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
+              <span>❓</span> Help & support
+            </Link>
+          </div>
+        </nav>
+        <div className="px-4 py-4 border-t border-gray-100">
+          <Link href="/api/auth/logout" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 text-sm">
+            <span>🚪</span> Sign out
+          </Link>
+        </div>
+      </aside>
 
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Booking Confirmed!</h2>
-          <p className="text-gray-500 text-sm mb-6">
-            Your ticket has been booked successfully.
-          </p>
+      {/* Main */}
+      <main className="ml-64 flex-1 p-8 flex items-start justify-center">
+        <div className="w-full max-w-lg">
+
+          {/* Success */}
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 bg-green-100 border-4 border-green-400 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-green-600 text-2xl">✓</span>
+            </div>
+            <h1 className="text-3xl font-bold text-gray-800">Booking Confirmed!</h1>
+            <p className="text-gray-500 mt-1">Your ticket has been sent to your email.</p>
+          </div>
 
           {/* Booking reference */}
-          <div className="bg-[#002868] rounded-xl p-4 mb-6">
-            <p className="text-[#f0b429] text-xs uppercase tracking-widest mb-1">
-              Booking Reference
-            </p>
-            <p className="text-white text-2xl font-bold tracking-widest">
-              USIU-{bookingRef}
-            </p>
+          <div className="bg-[#002868] rounded-2xl p-6 mb-4">
+            <p className="text-[#f0b429] text-xs uppercase tracking-widest text-center mb-1">Booking Reference</p>
+            <p className="text-white text-2xl font-bold tracking-widest text-center">{bookingRef}</p>
           </div>
 
-          {/* Event details */}
-          <div className="bg-gray-50 rounded-xl p-4 mb-6 text-left">
-            <h3 className="font-semibold text-gray-800 mb-3">{ticket.title}</h3>
-            <div className="flex flex-col gap-1">
-              <p className="text-sm text-gray-500">📅 {ticket.date} · {ticket.time}</p>
-              <p className="text-sm text-gray-500">📍 {ticket.venue}</p>
-              <p className="text-sm text-gray-500">🎓 {ticket.first_name} {ticket.last_name}</p>
+          <div className="bg-white rounded-2xl border border-gray-200 p-6">
+            <div className="grid grid-cols-2 gap-4 mb-6">
+
+              {/* Left — details */}
+              <div>
+                <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Ticket details</p>
+                <p className="font-semibold text-gray-800 mb-2">{ticket.title}</p>
+                <p className="text-sm text-gray-500 mb-1">📅 {ticket.date} · {ticket.time}</p>
+                <p className="text-sm text-gray-500 mb-1">📍 {ticket.venue}</p>
+                <p className="text-sm text-gray-500">🎓 {ticket.first_name} {ticket.last_name}</p>
+                <div className="mt-4">
+                  <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Quantity</p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">🎟️</span>
+                    <p className="font-bold text-gray-800">1 Ticket(s)</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right — QR code */}
+              <div className="flex flex-col items-center justify-center bg-gray-50 rounded-xl p-4">
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(ticket.qr_code)}`}
+                  alt="QR Code"
+                  className="w-32 h-32 mb-2"
+                />
+                <p className="text-xs text-gray-400 uppercase tracking-wide">Scan at entrance</p>
+              </div>
+
+            </div>
+
+            {/* Buttons */}
+            <div className="flex flex-col gap-3">
+              <DownloadTicketButton
+                ticketId={ticket.id}
+                eventTitle={ticket.title}
+                eventDate={`${ticket.date} · ${ticket.time}`}
+                eventVenue={ticket.venue}
+                studentName={`${ticket.first_name} ${ticket.last_name}`}
+                qrCode={ticket.qr_code}
+                bookingRef={bookingRef}
+              />
+              <Link
+                href="/dashboard"
+                className="block text-center border border-gray-300 text-gray-600 py-3 rounded-xl text-sm hover:bg-gray-50"
+              >
+                Back to Dashboard
+              </Link>
             </div>
           </div>
 
-          {/* Status */}
-          <div className={`px-4 py-2 rounded-lg mb-6 text-sm font-medium ${
-            ticket.payment_status === 'paid'
-              ? 'bg-green-50 text-green-700'
-              : 'bg-yellow-50 text-yellow-700'
-          }`}>
-            {ticket.payment_status === 'paid' ? '✅ Payment Confirmed' : '⏳ Payment Pending'}
-          </div>
-
-          {/* Buttons */}
-          <div className="flex flex-col gap-3">
-            <Link
-              href={`/tickets/${ticket.id}`}
-              className="bg-[#002868] text-white py-3 rounded-xl text-sm font-medium hover:bg-blue-900"
-            >
-              View QR Code Ticket
-            </Link>
-            <Link
-              href="/dashboard"
-              className="border border-gray-300 text-gray-600 py-3 rounded-xl text-sm hover:bg-gray-50"
-            >
-              Back to Dashboard
-            </Link>
-          </div>
-
         </div>
-      </div>
-
-    </main>
+      </main>
+    </div>
   )
 }

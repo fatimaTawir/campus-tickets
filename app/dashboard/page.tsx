@@ -7,10 +7,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function DashboardPage() {
   const user = await getCurrentUser()
-
-  if (!user) {
-    redirect('/login')
-  }
+  if (!user) redirect('/login')
 
   const ticketsResult = await pool.query(
     `SELECT t.id, t.qr_code, t.payment_status, t.created_at,
@@ -22,141 +19,212 @@ export default async function DashboardPage() {
     [Number(user.userId)]
   ).catch(() => ({ rows: [] }))
 
+  const eventsResult = await pool.query(
+    `SELECT COUNT(*) as count FROM events WHERE date >= CURRENT_DATE`
+  ).catch(() => ({ rows: [{ count: 0 }] }))
+
   const tickets = ticketsResult.rows
+  const upcomingCount = eventsResult.rows[0].count
+  const paidTickets = tickets.filter((t: any) => t.payment_status === 'paid')
+  const pendingTickets = tickets.filter((t: any) => t.payment_status === 'pending')
+  const initials = `${user.firstName?.[0] ?? ''}`.toUpperCase()
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex">
 
-      {/* Navbar */}
-      <nav className="bg-[#002868] px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="bg-[#BF0A30] text-white text-xs font-bold px-2 py-1 rounded">
-            USIU-A
-          </div>
-          <Link href="/" className="text-white text-lg font-bold">CampusTickets</Link>
+      {/* Sidebar */}
+      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col min-h-screen fixed left-0 top-0 z-10">
+
+        {/* Logo */}
+        <div className="px-6 py-5 border-b border-gray-100">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-[#002868] rounded-lg flex items-center justify-center">
+              <span className="text-[#f0b429] text-xs font-bold">CT</span>
+            </div>
+            <span className="font-bold text-gray-800">CampusTickets</span>
+          </Link>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-blue-200 text-sm">Hi, {user.firstName}!</span>
-          <Link href="/" className="text-blue-200 hover:text-white text-sm">
-            Events
-          </Link>
-          <Link href="/analytics" className="text-blue-200 hover:text-white text-sm">
-            Analytics
-          </Link>
-          {(user.role === 'organizer' || user.role === 'admin') && (
-            <Link href="/organizer" className="text-blue-200 hover:text-white text-sm">
-              Organizer
+
+        {/* User profile */}
+        <div className="px-6 py-4 border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#002868] rounded-full flex items-center justify-center text-white font-bold text-sm">
+              {initials}
+            </div>
+            <div>
+              <p className="font-semibold text-gray-800 text-sm">{user.firstName}</p>
+              <p className="text-xs text-gray-400 capitalize">{user.role}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Menu */}
+        <nav className="flex-1 px-4 py-4">
+          <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold mb-3 px-2">Menu</p>
+          <div className="flex flex-col gap-1">
+            <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#002868] text-white text-sm font-medium">
+              <span>🏠</span> Dashboard
             </Link>
-          )}
-          <Link href="/about" className="text-blue-200 hover:text-white text-sm">
-            About
-          </Link>
-          <Link href="/help" className="text-blue-200 hover:text-white text-sm">
-            Help
-          </Link>
+            <Link href="/" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
+              <span>🎫</span> Browse events
+            </Link>
+            <Link href="/dashboard#tickets" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
+              <span>🎟️</span> My tickets
+            </Link>
+            <Link href="/dashboard#notifications" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
+              <span>🔔</span> Notifications
+            </Link>
+          </div>
+
+          <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold mb-3 px-2 mt-6">Account</p>
+          <div className="flex flex-col gap-1">
+            <Link href="/dashboard/profile" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
+              <span>⚙️</span> Profile settings
+            </Link>
+            <Link href="/help" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
+              <span>❓</span> Help & support
+            </Link>
+            {(user.role === 'organizer' || user.role === 'admin') && (
+              <Link href="/organizer" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
+                <span>📊</span> Organizer
+              </Link>
+            )}
+          </div>
+        </nav>
+
+        {/* Bottom */}
+        <div className="px-4 py-4 border-t border-gray-100">
+          <div className="bg-[#f0b429]/10 rounded-xl p-3 mb-3">
+            <p className="text-xs font-bold text-[#002868]">⭐ UPGRADE</p>
+            <p className="text-xs text-gray-500">Get Pro features</p>
+          </div>
           <Link
             href="/api/auth/logout"
-            className="bg-[#BF0A30] text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 text-sm w-full"
           >
-            Log out
+            <span>🚪</span> Sign out
           </Link>
         </div>
-      </nav>
+      </aside>
 
-      <div className="max-w-5xl mx-auto px-6 py-10 w-full">
+      {/* Main content */}
+      <main className="ml-64 flex-1 p-8">
 
         {/* Welcome banner */}
-        <div className="bg-[#002868] rounded-2xl p-6 mb-8 flex items-center justify-between">
+        <div className="bg-[#002868] rounded-2xl p-6 mb-6 flex items-center justify-between">
           <div>
-            <p className="text-[#f0b429] text-sm font-semibold uppercase tracking-widest mb-1">
-              Student Dashboard
-            </p>
-            <h2 className="text-2xl font-bold text-white">
-              Welcome back, {user.firstName}!
-            </h2>
-            <p className="text-blue-200 text-sm mt-1">{user.email}</p>
+            <p className="text-blue-300 text-sm mb-1">Good morning,</p>
+            <h2 className="text-2xl font-bold text-white">{user.firstName}</h2>
+            <p className="text-blue-300 text-sm mt-1">{user.email}</p>
           </div>
-          <div className="text-6xl">🎓</div>
+          <Link
+            href="/"
+            className="bg-[#f0b429] text-[#002868] font-bold text-sm px-5 py-2.5 rounded-xl hover:bg-yellow-400"
+          >
+            + Book a ticket
+          </Link>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <div className="bg-white rounded-xl border border-gray-200 p-5 text-center">
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="bg-white rounded-2xl border border-gray-200 p-5">
+            <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Upcoming Events</p>
+            <p className="text-3xl font-bold text-[#002868]">{upcomingCount}</p>
+            <p className="text-xs text-gray-400 mt-1">Available now</p>
+          </div>
+          <div className="bg-white rounded-2xl border border-gray-200 p-5">
+            <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">My Tickets</p>
             <p className="text-3xl font-bold text-[#002868]">{tickets.length}</p>
-            <p className="text-gray-500 text-sm mt-1">Tickets Purchased</p>
+            <p className="text-xs text-gray-400 mt-1">All time</p>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-5 text-center">
-            <p className="text-3xl font-bold text-[#BF0A30]">
-              {tickets.filter((t: any) => t.payment_status === 'paid').length}
-            </p>
-            <p className="text-gray-500 text-sm mt-1">Confirmed Tickets</p>
-          </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-5 text-center">
-            <p className="text-3xl font-bold text-[#f0b429]">
-              {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-            </p>
-            <p className="text-gray-500 text-sm mt-1">Account Type</p>
+          <div className="bg-white rounded-2xl border border-gray-200 p-5">
+            <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Notifications</p>
+            <p className="text-3xl font-bold text-[#f0b429]">{pendingTickets.length}</p>
+            <p className="text-xs text-gray-400 mt-1">Pending payments</p>
           </div>
         </div>
 
-        {/* My Tickets */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-8">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">My Tickets</h3>
-          {tickets.length === 0 ? (
-            <div className="text-center py-10">
-              <p className="text-4xl mb-3">🎟️</p>
-              <p className="text-gray-500 text-sm">You haven't bought any tickets yet.</p>
-              <Link
-                href="/"
-                className="inline-block mt-4 bg-[#002868] text-white px-5 py-2 rounded-lg text-sm hover:bg-blue-900"
-              >
-                Browse Events
-              </Link>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-3">
-              {tickets.map((ticket: any) => (
-                <div key={ticket.id} className="border border-gray-200 rounded-xl p-4 flex items-center justify-between">
-                  <div>
-                    <Link href={`/tickets/${ticket.id}`} className="font-medium text-gray-800 hover:text-[#002868] hover:underline">
-                      {ticket.title}
-                    </Link>
-                    <p className="text-sm text-gray-500">📍 {ticket.venue} · 📅 {ticket.date}</p>
+        <div className="grid grid-cols-3 gap-6">
+
+          {/* My tickets — left 2/3 */}
+          <div className="col-span-2">
+            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+              <h3 className="font-semibold text-gray-800 mb-4">Your Next Ticket</h3>
+
+              {paidTickets.length === 0 && pendingTickets.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <span className="text-2xl">📁</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className={`text-xs font-medium px-3 py-1 rounded-full ${
-                      ticket.payment_status === 'paid'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-yellow-100 text-yellow-700'
-                    }`}>
-                      {ticket.payment_status}
-                    </span>
-                    {ticket.payment_status === 'pending' && (
-                      <Link
-                        href={`/pay/${ticket.id}`}
-                        className="bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-green-700"
-                      >
-                        Pay Now
-                      </Link>
-                    )}
-                  </div>
+                  <p className="font-medium text-gray-700 mb-1">No upcoming tickets</p>
+                  <p className="text-sm text-gray-400 mb-4">You don't have any valid tickets for upcoming events.</p>
+                  <Link href="/" className="border border-gray-300 text-gray-600 text-sm px-5 py-2 rounded-xl hover:bg-gray-50">
+                    Browse events
+                  </Link>
                 </div>
-              ))}
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {tickets.map((ticket: any) => (
+                    <div key={ticket.id} className="border border-gray-200 rounded-xl p-4 flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-gray-800 text-sm">{ticket.title}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">📍 {ticket.venue} · 📅 {ticket.date}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs px-3 py-1 rounded-full font-medium ${
+                          ticket.payment_status === 'paid'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-yellow-100 text-yellow-700'
+                        }`}>
+                          {ticket.payment_status === 'paid' ? '✅ Paid' : '⏳ Pending'}
+                        </span>
+                        {ticket.payment_status === 'pending' && (
+                          <Link href={`/pay/${ticket.id}`} className="bg-[#002868] text-white text-xs px-3 py-1.5 rounded-lg hover:bg-blue-900">
+                            Pay Now
+                          </Link>
+                        )}
+                        {ticket.payment_status === 'paid' && (
+                          <Link href={`/booking-confirmed/${ticket.id}`} className="bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-green-700">
+                            View Ticket
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </div>
 
-        {/* Browse Events button */}
-        <div className="text-center">
-          <Link
-            href="/"
-            className="inline-block bg-[#BF0A30] text-white px-8 py-3 rounded-lg text-sm font-medium hover:bg-red-700"
-          >
-            Browse Upcoming Events
-          </Link>
-        </div>
+          {/* Upcoming events — right 1/3 */}
+          <div className="col-span-1">
+            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-gray-800">Upcoming events</h3>
+                <Link href="/" className="text-xs text-[#002868] hover:underline">View all</Link>
+              </div>
+              <div className="flex flex-col gap-3">
+                {tickets.slice(0, 3).map((ticket: any) => (
+                  <div key={ticket.id} className="flex items-start gap-3">
+                    <div className="bg-[#002868] text-white rounded-lg p-2 text-center min-w-[40px]">
+                      <p className="text-xs font-bold">{new Date(ticket.date).toLocaleString('default', { month: 'short' }).toUpperCase()}</p>
+                      <p className="text-sm font-bold">{new Date(ticket.date).getDate()}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-800">{ticket.title}</p>
+                      <p className="text-xs text-gray-400">📍 {ticket.venue}</p>
+                    </div>
+                  </div>
+                ))}
+                {tickets.length === 0 && (
+                  <p className="text-sm text-gray-400 text-center py-4">No events yet</p>
+                )}
+              </div>
+            </div>
+          </div>
 
-      </div>
-    </main>
+        </div>
+      </main>
+    </div>
   )
 }
