@@ -9,15 +9,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Ticket ID required' }, { status: 400 })
     }
 
-    await pool.query(
-      'UPDATE tickets SET payment_status = $1 WHERE id = $2',
+    const result = await pool.query(
+      'UPDATE tickets SET payment_status = $1 WHERE id = $2 RETURNING id, payment_status',
       ['paid', ticketId]
     )
 
-    return NextResponse.json({ message: 'Payment confirmed!' })
+    console.log('Confirm result:', result.rows)
 
-  } catch (error) {
-    console.error('Confirm error:', error)
-    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
+    if (result.rows.length === 0) {
+      return NextResponse.json({ error: 'Ticket not found' }, { status: 404 })
+    }
+
+    return NextResponse.json({ success: true, ticketId })
+
+  } catch (error: any) {
+    console.error('Confirm error:', error.message)
+    return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

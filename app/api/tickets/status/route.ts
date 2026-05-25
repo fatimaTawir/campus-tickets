@@ -21,8 +21,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ status: result.rows[0].payment_status })
 
-  } catch (error) {
-    console.error('Status check error:', error)
-    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
