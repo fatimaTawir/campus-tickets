@@ -112,14 +112,18 @@ export default async function DashboardPage() {
 
         {/* Top navbar */}
         <div className="bg-[#002868] px-8 py-3 flex items-center justify-between sticky top-0 z-10">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-[#f0b429] rounded-lg flex items-center justify-center">
+              <span className="text-[#002868] text-xs font-bold">CT</span>
+            </div>
+            <span className="text-white font-bold text-sm">USIU-A · Campus Tickets</span>
+          </div>
           <div className="flex items-center gap-6">
             <Link href="/" className="text-blue-200 hover:text-white text-sm font-medium">Events</Link>
             <Link href="/about" className="text-blue-200 hover:text-white text-sm font-medium">About</Link>
             <Link href="/help" className="text-blue-200 hover:text-white text-sm font-medium">Help</Link>
-          </div>
-          <div className="flex items-center gap-4">
             <div className="relative">
-              <span className="text-xl text-blue-200 hover:text-white cursor-pointer">🔔</span>
+              <span className="text-xl text-blue-200 cursor-pointer">🔔</span>
               {pendingTickets.length > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
                   {pendingTickets.length}
