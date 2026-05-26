@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
         firstName: user.first_name,
       },
       process.env.JWT_SECRET!,
-      { expiresIn: '7d' }
+      { expiresIn: '30d' }
     )
 
     // 6. Send back the token and user info
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7 // 7 days
+      maxAge: 60 * 60 * 24 * 30 // 30 days
     })
 
     return response
