@@ -5,6 +5,18 @@ import pool from '@/app/lib/db'
 
 export const dynamic = 'force-dynamic'
 
+type DashboardTicket = {
+  id: number
+  title: string
+  venue: string
+  date: string
+  payment_status: 'paid' | 'pending' | string
+}
+
+type CountRow = {
+  count: number | string
+}
+
 export default async function DashboardPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login')
@@ -17,16 +29,16 @@ export default async function DashboardPage() {
      WHERE t.user_id = $1
      ORDER BY t.created_at DESC`,
     [Number(user.userId)]
-  ).catch(() => ({ rows: [] }))
+  ).catch(() => ({ rows: [] as DashboardTicket[] }))
 
   const eventsResult = await pool.query(
     `SELECT COUNT(*) as count FROM events WHERE date >= CURRENT_DATE`
-  ).catch(() => ({ rows: [{ count: 0 }] }))
+  ).catch(() => ({ rows: [{ count: 0 }] as CountRow[] }))
 
-  const tickets = ticketsResult.rows
-  const upcomingCount = eventsResult.rows[0].count
-  const paidTickets = tickets.filter((t: any) => t.payment_status === 'paid')
-  const pendingTickets = tickets.filter((t: any) => t.payment_status === 'pending')
+  const tickets = ticketsResult.rows as DashboardTicket[]
+  const upcomingCount = Number(eventsResult.rows[0]?.count ?? 0)
+  const paidTickets = tickets.filter((ticket) => ticket.payment_status === 'paid')
+  const pendingTickets = tickets.filter((ticket) => ticket.payment_status === 'pending')
   const initials = `${user.firstName?.[0] ?? ''}`.toUpperCase()
 
   return (
@@ -187,14 +199,14 @@ export default async function DashboardPage() {
                       <span className="text-2xl">📁</span>
                     </div>
                     <p className="font-medium text-gray-700 mb-1">No upcoming tickets</p>
-                    <p className="text-sm text-gray-400 mb-4">You don't have any valid tickets for upcoming events.</p>
+                    <p className="text-sm text-gray-400 mb-4">You don&apos;t have any valid tickets for upcoming events.</p>
                     <Link href="/" className="border border-gray-300 text-gray-600 text-sm px-5 py-2 rounded-xl hover:bg-gray-50">
                       Browse events
                     </Link>
                   </div>
                 ) : (
                   <div className="flex flex-col gap-3">
-                    {tickets.map((ticket: any) => (
+                    {tickets.map((ticket) => (
                       <div key={ticket.id} className="border border-gray-200 rounded-xl p-4 flex items-center justify-between">
                         <div>
                           <p className="font-medium text-gray-800 text-sm">{ticket.title}</p>
@@ -234,7 +246,7 @@ export default async function DashboardPage() {
                   <Link href="/" className="text-xs text-[#002868] hover:underline">View all</Link>
                 </div>
                 <div className="flex flex-col gap-3">
-                  {tickets.slice(0, 3).map((ticket: any) => (
+                  {tickets.slice(0, 3).map((ticket) => (
                     <div key={ticket.id} className="flex items-start gap-3">
                       <div className="bg-[#002868] text-white rounded-lg p-2 text-center min-w-[40px]">
                         <p className="text-xs font-bold">{new Date(ticket.date).toLocaleString('default', { month: 'short' }).toUpperCase()}</p>
