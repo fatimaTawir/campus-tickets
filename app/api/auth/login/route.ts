@@ -27,7 +27,6 @@ export async function POST(request: NextRequest) {
     }
 
     const user = result.rows[0]
-
     const passwordMatch = await bcrypt.compare(password, user.password_hash)
 
     if (!passwordMatch) {
@@ -38,7 +37,6 @@ export async function POST(request: NextRequest) {
     }
 
     const secret = process.env.JWT_SECRET || 'usiu_campus_tickets_secret_key_2026'
-
     const token = jwt.sign(
       {
         userId: user.id,
@@ -60,13 +58,13 @@ export async function POST(request: NextRequest) {
       }
     }, { status: 200 })
 
-   response.cookies.set('token', token, {
-  httpOnly: true,
-  secure: true,
-  sameSite: 'lax',
-  path: '/',
-  maxAge: 60 * 60 * 24 * 30
-})
+    response.cookies.set('token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30
+    })
 
     return response
 
