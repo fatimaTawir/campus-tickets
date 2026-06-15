@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function NotificationsPage() {
   const user = await getCurrentUser()
-  if (!user) redirect('/login')
+  if (!user) redirect('/login?redirect=/dashboard/notifications')
 
   const ticketsResult = await pool.query(
     `SELECT t.id, t.payment_status, e.title, e.date
@@ -48,7 +48,7 @@ export default async function NotificationsPage() {
             <Link href="/dashboard/tickets" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm"><span>🎟️</span> My tickets</Link>
             <Link href="/dashboard/notifications" className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#002868] text-white text-sm font-medium"><span>🔔</span> Notifications</Link>
           </div>
-         <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold mb-3 px-2 mt-6">Account</p>
+          <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold mb-3 px-2 mt-6">Account</p>
           <div className="flex flex-col gap-1">
             <Link href="/dashboard/profile" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm"><span>⚙️</span> Profile settings</Link>
             <Link href="/help" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm"><span>❓</span> Help & support</Link>

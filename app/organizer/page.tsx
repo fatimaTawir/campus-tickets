@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic'
 export default async function OrganizerDashboard() {
   const user = await getCurrentUser()
 
-  if (!user) redirect('/login')
+  if (!user) redirect('/login?redirect=/organizer')
   if (user.role !== 'organizer' && user.role !== 'admin') redirect('/dashboard')
 
   // Get events created by this organizer

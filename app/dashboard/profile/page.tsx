@@ -6,8 +6,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function ProfilePage() {
   const user = await getCurrentUser()
-  if (!user) redirect('/login')
-
+  if (!user) redirect('/login?redirect=/dashboard/profile')
   const initials = `${user.firstName?.[0] ?? ''}`.toUpperCase()
 
   return (

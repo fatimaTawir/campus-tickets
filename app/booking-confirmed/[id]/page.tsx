@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function BookingConfirmedPage({ params }: { params: Promise<{ id: string }> }) {
   const user = await getCurrentUser()
-  if (!user) redirect('/login')
+  if (!user) redirect('/login?redirect=/dashboard')
 
   const { id } = await params
 
