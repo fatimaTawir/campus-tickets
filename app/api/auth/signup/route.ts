@@ -56,9 +56,9 @@ export async function POST(request: NextRequest) {
     }, { status: 201 })
 
     response.cookies.set('token', token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
+      httpOnly: false,
+      secure: false,
+      sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 30
     })
