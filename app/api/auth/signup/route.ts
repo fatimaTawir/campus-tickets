@@ -37,7 +37,8 @@ export async function POST(request: NextRequest) {
 
     const newUser = result.rows[0]
 
-    // Auto-login: create JWT token immediately after signup
+    const secret = process.env.JWT_SECRET || 'usiu_campus_tickets_secret_key_2026'
+
     const token = jwt.sign(
       {
         userId: newUser.id,
@@ -45,7 +46,7 @@ export async function POST(request: NextRequest) {
         role: newUser.role,
         firstName: newUser.first_name,
       },
-      process.env.JWT_SECRET!,
+      secret,
       { expiresIn: '30d' }
     )
 
@@ -54,14 +55,13 @@ export async function POST(request: NextRequest) {
       user: newUser
     }, { status: 201 })
 
-    // Set cookie so user is logged in immediately after signup
     response.cookies.set('token', token, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'lax',
-  path: '/',
-  maxAge: 60 * 60 * 24 * 30
-})
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30
+    })
 
     return response
 
