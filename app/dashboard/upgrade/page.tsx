@@ -1,38 +1,14 @@
-"use client"
+import { getCurrentUser } from '@/app/lib/auth'
+import { redirect } from 'next/navigation'
+import Link from 'next/link'
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
+export const dynamic = 'force-dynamic'
 
-export default function UpgradePage() {
-  const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+export default async function UpgradePage() {
+  const user = await getCurrentUser()
+  if (!user) redirect('/login?redirect=/dashboard/upgrade')
 
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const res = await fetch('/api/me')
-        if (!res.ok) {
-          window.location.href = '/login?redirect=/dashboard/upgrade'
-          return
-        }
-        const data = await res.json()
-        setUser(data.user)
-      } catch (e) {
-        window.location.href = '/login'
-      } finally {
-        setLoading(false)
-      }
-    }
-    loadData()
-  }, [])
-
-  const initials = user?.firstName?.[0]?.toUpperCase() || '?'
-
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <p className="text-gray-500">Loading...</p>
-    </div>
-  )
+  const initials = `${user.firstName?.[0] ?? ''}`.toUpperCase()
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -49,8 +25,8 @@ export default function UpgradePage() {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[#002868] rounded-full flex items-center justify-center text-white font-bold text-sm">{initials}</div>
             <div>
-              <p className="font-semibold text-gray-800 text-sm">{user?.firstName}</p>
-              <p className="text-xs text-gray-400 capitalize">{user?.role}</p>
+              <p className="font-semibold text-gray-800 text-sm">{user.firstName}</p>
+              <p className="text-xs text-gray-400 capitalize">{user.role}</p>
             </div>
           </div>
         </div>
@@ -66,6 +42,9 @@ export default function UpgradePage() {
           <div className="flex flex-col gap-1">
             <Link href="/dashboard/profile" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm"><span>⚙️</span> Profile settings</Link>
             <Link href="/help" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm"><span>❓</span> Help & support</Link>
+            {(user.role === 'organizer' || user.role === 'admin') && (
+              <Link href="/organizer" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm"><span>📊</span> Organizer</Link>
+            )}
           </div>
         </nav>
         <div className="px-4 py-4 border-t border-gray-100">
@@ -90,7 +69,7 @@ export default function UpgradePage() {
             <span className="text-xl text-blue-200">🔔</span>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-[#f0b429] rounded-full flex items-center justify-center text-[#002868] text-xs font-bold">{initials}</div>
-              <span className="text-sm font-medium text-white">{user?.firstName}</span>
+              <span className="text-sm font-medium text-white">{user.firstName}</span>
             </div>
           </div>
         </div>
