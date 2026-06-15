@@ -1,21 +1,47 @@
-import { getCurrentUser } from '@/app/lib/auth'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
+"use client"
 
-export const dynamic = 'force-dynamic'
+import { useState, useEffect } from "react"
+import Link from "next/link"
 
-export default async function UpgradePage() {
-  const user = await getCurrentUser()
-  if (!user) redirect('/login?redirect=/dashboard/upgrade')
+export default function UpgradePage() {
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
 
-  const initials = `${user.firstName?.[0] ?? ''}`.toUpperCase()
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const res = await fetch('/api/me')
+        if (!res.ok) {
+          window.location.href = '/login?redirect=/dashboard/upgrade'
+          return
+        }
+        const data = await res.json()
+        setUser(data.user)
+      } catch (e) {
+        window.location.href = '/login'
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadData()
+  }, [])
+
+  const initials = user?.firstName?.[0]?.toUpperCase() || '?'
+
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <p className="text-gray-500">Loading...</p>
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col min-h-screen fixed left-0 top-0 z-10">
         <div className="px-6 py-5 border-b border-gray-100">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#002868] rounded-lg flex items-center justify-center"><span className="text-[#f0b429] text-xs font-bold">CT</span></div>
+            <div className="w-8 h-8 bg-[#002868] rounded-lg flex items-center justify-center">
+              <span className="text-[#f0b429] text-xs font-bold">CT</span>
+            </div>
             <span className="font-bold text-gray-800">CampusTickets</span>
           </Link>
         </div>
@@ -23,8 +49,8 @@ export default async function UpgradePage() {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[#002868] rounded-full flex items-center justify-center text-white font-bold text-sm">{initials}</div>
             <div>
-              <p className="font-semibold text-gray-800 text-sm">{user.firstName}</p>
-              <p className="text-xs text-gray-400 capitalize">{user.role}</p>
+              <p className="font-semibold text-gray-800 text-sm">{user?.firstName}</p>
+              <p className="text-xs text-gray-400 capitalize">{user?.role}</p>
             </div>
           </div>
         </div>
@@ -64,21 +90,20 @@ export default async function UpgradePage() {
             <span className="text-xl text-blue-200">🔔</span>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-[#f0b429] rounded-full flex items-center justify-center text-[#002868] text-xs font-bold">{initials}</div>
-              <span className="text-sm font-medium text-white">{user.firstName}</span>
+              <span className="text-sm font-medium text-white">{user?.firstName}</span>
             </div>
           </div>
         </div>
 
         <div className="p-8 max-w-3xl">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Upgrade to Pro</h2>
-          <p className="text-gray-500 mb-8">Get access to premium features for the best campus event experience.</p>
-
+          <p className="text-gray-500 mb-8">Get access to premium features.</p>
           <div className="grid grid-cols-2 gap-6">
             <div className="bg-white rounded-2xl border border-gray-200 p-6">
               <p className="text-sm font-semibold text-gray-500 mb-1">Free</p>
-              <p className="text-3xl font-bold text-gray-800 mb-4">UGX 0</p>
+              <p className="text-3xl font-bold text-gray-800 mb-4">KES 0</p>
               <ul className="flex flex-col gap-2 mb-6">
-                {['Browse events', 'Buy up to 2 tickets/month', 'QR code ticket', 'Email confirmation'].map(f => (
+                {['Browse events', 'Buy tickets', 'QR code ticket', 'Email confirmation'].map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
                     <span className="text-green-500">✓</span> {f}
                   </li>
@@ -86,10 +111,9 @@ export default async function UpgradePage() {
               </ul>
               <div className="bg-gray-100 text-gray-500 text-center py-2.5 rounded-xl text-sm font-medium">Current plan</div>
             </div>
-
             <div className="bg-[#002868] rounded-2xl p-6">
               <p className="text-sm font-semibold text-[#f0b429] mb-1">Pro ⭐</p>
-              <p className="text-3xl font-bold text-white mb-4">UGX 5,000<span className="text-sm font-normal text-blue-300">/month</span></p>
+              <p className="text-3xl font-bold text-white mb-4">KES 500<span className="text-sm font-normal text-blue-300">/month</span></p>
               <ul className="flex flex-col gap-2 mb-6">
                 {['Everything in Free', 'Unlimited tickets', 'Priority support', 'Early access to events', 'Download PDF tickets', 'Exclusive Pro badge'].map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm text-blue-100">

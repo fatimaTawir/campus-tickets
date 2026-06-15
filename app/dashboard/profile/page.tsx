@@ -1,20 +1,47 @@
-import { getCurrentUser } from '@/app/lib/auth'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
+"use client"
 
-export const dynamic = 'force-dynamic'
+import { useState, useEffect } from "react"
+import Link from "next/link"
 
-export default async function ProfilePage() {
-  const user = await getCurrentUser()
-  if (!user) redirect('/login?redirect=/dashboard/profile')
-  const initials = `${user.firstName?.[0] ?? ''}`.toUpperCase()
+export default function ProfilePage() {
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const res = await fetch('/api/me')
+        if (!res.ok) {
+          window.location.href = '/login?redirect=/dashboard/profile'
+          return
+        }
+        const data = await res.json()
+        setUser(data.user)
+      } catch (e) {
+        window.location.href = '/login'
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadData()
+  }, [])
+
+  const initials = user?.firstName?.[0]?.toUpperCase() || '?'
+
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <p className="text-gray-500">Loading...</p>
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col min-h-screen fixed left-0 top-0 z-10">
         <div className="px-6 py-5 border-b border-gray-100">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#002868] rounded-lg flex items-center justify-center"><span className="text-[#f0b429] text-xs font-bold">CT</span></div>
+            <div className="w-8 h-8 bg-[#002868] rounded-lg flex items-center justify-center">
+              <span className="text-[#f0b429] text-xs font-bold">CT</span>
+            </div>
             <span className="font-bold text-gray-800">CampusTickets</span>
           </Link>
         </div>
@@ -22,8 +49,8 @@ export default async function ProfilePage() {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[#002868] rounded-full flex items-center justify-center text-white font-bold text-sm">{initials}</div>
             <div>
-              <p className="font-semibold text-gray-800 text-sm">{user.firstName}</p>
-              <p className="text-xs text-gray-400 capitalize">{user.role}</p>
+              <p className="font-semibold text-gray-800 text-sm">{user?.firstName}</p>
+              <p className="text-xs text-gray-400 capitalize">{user?.role}</p>
             </div>
           </div>
         </div>
@@ -63,7 +90,7 @@ export default async function ProfilePage() {
             <span className="text-xl text-blue-200">🔔</span>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-[#f0b429] rounded-full flex items-center justify-center text-[#002868] text-xs font-bold">{initials}</div>
-              <span className="text-sm font-medium text-white">{user.firstName}</span>
+              <span className="text-sm font-medium text-white">{user?.firstName}</span>
             </div>
           </div>
         </div>
@@ -76,23 +103,23 @@ export default async function ProfilePage() {
                 {initials}
               </div>
               <div>
-                <p className="text-xl font-bold text-gray-800">{user.firstName}</p>
-                <p className="text-sm text-gray-400">{user.email}</p>
-                <span className="text-xs bg-[#002868] text-white px-2 py-0.5 rounded-full capitalize">{user.role}</span>
+                <p className="text-xl font-bold text-gray-800">{user?.firstName}</p>
+                <p className="text-sm text-gray-400">{user?.email}</p>
+                <span className="text-xs bg-[#002868] text-white px-2 py-0.5 rounded-full capitalize">{user?.role}</span>
               </div>
             </div>
             <div className="flex flex-col gap-4">
               <div>
                 <label className="text-xs text-gray-400 uppercase tracking-wide block mb-1">Full Name</label>
-                <p className="text-gray-800 font-medium bg-gray-50 px-4 py-2.5 rounded-lg">{user.firstName}</p>
+                <p className="text-gray-800 font-medium bg-gray-50 px-4 py-2.5 rounded-lg">{user?.firstName}</p>
               </div>
               <div>
                 <label className="text-xs text-gray-400 uppercase tracking-wide block mb-1">Email</label>
-                <p className="text-gray-800 font-medium bg-gray-50 px-4 py-2.5 rounded-lg">{user.email}</p>
+                <p className="text-gray-800 font-medium bg-gray-50 px-4 py-2.5 rounded-lg">{user?.email}</p>
               </div>
               <div>
                 <label className="text-xs text-gray-400 uppercase tracking-wide block mb-1">Role</label>
-                <p className="text-gray-800 font-medium bg-gray-50 px-4 py-2.5 rounded-lg capitalize">{user.role}</p>
+                <p className="text-gray-800 font-medium bg-gray-50 px-4 py-2.5 rounded-lg capitalize">{user?.role}</p>
               </div>
             </div>
           </div>
