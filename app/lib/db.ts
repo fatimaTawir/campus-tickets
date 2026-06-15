@@ -6,6 +6,9 @@ const pool = new Pool({
   max: 1,
   idleTimeoutMillis: 10000,
   connectionTimeoutMillis: 10000,
+  ssl: {
+    rejectUnauthorized: false
+  }
 })
 
 const rawQuery = pool.query.bind(pool)
