@@ -78,12 +78,12 @@ export default async function DashboardPage() {
               <span>🏠</span> Dashboard
             </Link>
             <Link href="/" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
-              <span>🎫</span> Browse events
+               <span>🎫</span> Browse events
             </Link>
-            <Link href="/dashboard#tickets" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
-              <span>🎟️</span> My tickets
+            <Link href="/dashboard/tickets" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
+                  <span>🎟️</span> My tickets
             </Link>
-            <Link href="/dashboard#notifications" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
+            <Link href="/dashboard/notifications" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
               <span>🔔</span> Notifications
             </Link>
           </div>
