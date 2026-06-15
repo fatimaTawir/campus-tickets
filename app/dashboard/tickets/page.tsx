@@ -1,32 +1,49 @@
-import { getCurrentUser } from '@/app/lib/auth'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import pool from '@/app/lib/db'
+"use client"
 
-export const dynamic = 'force-dynamic'
+import { useState, useEffect } from "react"
+import Link from "next/link"
 
-export default async function MyTicketsPage() {
-  const user = await getCurrentUser()
-  if (!user) redirect('/login')
+export default function MyTicketsPage() {
+  const [tickets, setTickets] = useState<any[]>([])
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
 
-  const ticketsResult = await pool.query(
-    `SELECT t.id, t.qr_code, t.payment_status, t.created_at,
-            e.title, e.venue, e.date, e.time, e.price_amount
-     FROM tickets t
-     JOIN events e ON t.event_id = e.id
-     WHERE t.user_id = $1
-     ORDER BY t.created_at DESC`,
-    [Number(user.userId)]
-  ).catch(() => ({ rows: [] }))
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const res = await fetch('/api/me')
+        if (!res.ok) {
+          window.location.href = '/login?redirect=/dashboard/tickets'
+          return
+        }
+        const data = await res.json()
+        setUser(data.user)
 
-  const tickets = ticketsResult.rows
-  const pendingTickets = tickets.filter((t: any) => t.payment_status === 'pending')
-  const initials = `${user.firstName?.[0] ?? ''}`.toUpperCase()
+        const ticketsRes = await fetch('/api/my-tickets')
+        if (ticketsRes.ok) {
+          const ticketsData = await ticketsRes.json()
+          setTickets(ticketsData.tickets || [])
+        }
+      } catch (e) {
+        window.location.href = '/login'
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadData()
+  }, [])
+
+  const pendingTickets = tickets.filter(t => t.payment_status === 'pending')
+  const initials = user?.firstName?.[0]?.toUpperCase() || '?'
+
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <p className="text-gray-500">Loading...</p>
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-
-      {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col min-h-screen fixed left-0 top-0 z-10">
         <div className="px-6 py-5 border-b border-gray-100">
           <Link href="/" className="flex items-center gap-2">
@@ -42,8 +59,8 @@ export default async function MyTicketsPage() {
               {initials}
             </div>
             <div>
-              <p className="font-semibold text-gray-800 text-sm">{user.firstName}</p>
-              <p className="text-xs text-gray-400 capitalize">{user.role}</p>
+              <p className="font-semibold text-gray-800 text-sm">{user?.firstName}</p>
+              <p className="text-xs text-gray-400 capitalize">{user?.role}</p>
             </div>
           </div>
         </div>
@@ -84,7 +101,6 @@ export default async function MyTicketsPage() {
         </div>
       </aside>
 
-      {/* Main */}
       <main className="ml-64 flex-1">
         <div className="bg-[#002868] px-8 py-3 flex items-center justify-between sticky top-0 z-10">
           <div className="flex items-center gap-2">
@@ -109,7 +125,7 @@ export default async function MyTicketsPage() {
               <div className="w-8 h-8 bg-[#f0b429] rounded-full flex items-center justify-center text-[#002868] text-xs font-bold">
                 {initials}
               </div>
-              <span className="text-sm font-medium text-white">{user.firstName}</span>
+              <span className="text-sm font-medium text-white">{user?.firstName}</span>
             </div>
           </div>
         </div>
