@@ -55,13 +55,13 @@ export async function POST(request: NextRequest) {
       user: newUser
     }, { status: 201 })
 
-    response.cookies.set('token', token, {
-      httpOnly: false,
-      secure: false,
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 30
-    })
+   response.cookies.set('token', token, {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'lax',
+  path: '/',
+  maxAge: 60 * 60 * 24 * 30
+})
 
     return response
 
