@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut } from 'lucide-react'
 
 export default function CreateEventPage() {
   const router = useRouter()
@@ -71,7 +72,7 @@ export default function CreateEventPage() {
         <nav className="flex-1 p-4">
           <div className="flex flex-col gap-1">
             <Link href="/organizer" className="flex items-center gap-3 px-3 py-2 rounded-lg text-blue-200 hover:bg-blue-800 text-sm">
-              🏠 Dashboard
+              <Home className="w-4 h-4" /> Dashboard
             </Link>
             <Link href="/organizer/events" className="flex items-center gap-3 px-3 py-2 rounded-lg text-blue-200 hover:bg-blue-800 text-sm">
               📅 My Events
@@ -85,7 +86,7 @@ export default function CreateEventPage() {
           </div>
           <div className="mt-6 flex flex-col gap-1">
             <Link href="/api/auth/logout" className="flex items-center gap-3 px-3 py-2 rounded-lg text-red-300 hover:bg-blue-800 text-sm">
-              🚪 Sign out
+              <LogOut className="w-4 h-4" /> Sign out
             </Link>
           </div>
         </nav>

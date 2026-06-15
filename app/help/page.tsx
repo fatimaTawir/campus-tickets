@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut } from 'lucide-react'
 
 const faqs = [
   {
@@ -63,7 +64,7 @@ export default function HelpPage() {
 
         {/* Header */}
         <div className="bg-[#002868] rounded-2xl p-10 text-center mb-10">
-          <div className="text-5xl mb-4">❓</div>
+          <div className="text-5xl mb-4 flex justify-center"><HelpCircle className="w-12 h-12 text-blue-600" /></div>
           <h1 className="text-3xl font-bold text-white mb-2">How can we help?</h1>
           <p className="text-blue-200">Find answers to common questions or reach out directly.</p>
         </div>

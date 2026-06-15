@@ -2,6 +2,7 @@ import { getCurrentUser } from '@/app/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import pool from '@/app/lib/db'
+import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut, Star, Check } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -58,25 +59,25 @@ export default async function NotificationsPage() {
           <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold mb-3 px-2">Menu</p>
           <div className="flex flex-col gap-1">
             <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
-              <span>🏠</span> Dashboard
+              <Home className="w-4 h-4" /> Dashboard
             </Link>
             <Link href="/" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
-              <span>🎫</span> Browse events
+              <Calendar className="w-4 h-4" /> Browse events
             </Link>
             <Link href="/dashboard/tickets" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
-              <span>🎟️</span> My tickets
+              <Ticket className="w-4 h-4" /> My tickets
             </Link>
             <Link href="/dashboard/notifications" className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#002868] text-white text-sm font-medium">
-              <span>🔔</span> Notifications
+              <Bell className="w-4 h-4" /> Notifications
             </Link>
           </div>
           <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold mb-3 px-2 mt-6">Account</p>
           <div className="flex flex-col gap-1">
             <Link href="/dashboard/profile" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
-              <span>⚙️</span> Profile settings
+              <Settings className="w-4 h-4" /> Profile settings
             </Link>
             <Link href="/help" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
-              <span>❓</span> Help & support
+              <HelpCircle className="w-4 h-4" /> Help & support
             </Link>
             {(user.role === 'organizer' || user.role === 'admin') && (
               <Link href="/organizer" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
@@ -87,11 +88,11 @@ export default async function NotificationsPage() {
         </nav>
         <div className="px-4 py-4 border-t border-gray-100">
           <div className="bg-[#f0b429]/10 rounded-xl p-3 mb-3">
-            <p className="text-xs font-bold text-[#002868]">⭐ UPGRADE</p>
+            <p className="text-xs font-bold text-[#002868]"><Star className="w-4 h-4 fill-current" /> UPGRADE</p>
             <p className="text-xs text-gray-500">Get Pro features</p>
           </div>
           <Link href="/api/auth/logout" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 text-sm w-full">
-            <span>🚪</span> Sign out
+            <LogOut className="w-4 h-4" /> Sign out
           </Link>
         </div>
       </aside>
@@ -111,7 +112,7 @@ export default async function NotificationsPage() {
             <Link href="/about" className="text-blue-200 hover:text-white text-sm font-medium">About</Link>
             <Link href="/help" className="text-blue-200 hover:text-white text-sm font-medium">Help</Link>
             <div className="relative">
-              <span className="text-xl text-blue-200 cursor-pointer">🔔</span>
+              <Bell className="w-5 h-5 text-blue-200 cursor-pointer" />
               {pendingTickets.length > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
                   {pendingTickets.length}
@@ -131,7 +132,7 @@ export default async function NotificationsPage() {
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Notifications</h2>
           {pendingTickets.length === 0 ? (
             <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
-              <span className="text-4xl mb-3 block">🔔</span>
+              <Bell className="w-10 h-10 mb-3 text-blue-600" />
               <p className="font-medium text-gray-700">No notifications</p>
               <p className="text-sm text-gray-400 mt-1">You&apos;re all caught up!</p>
             </div>

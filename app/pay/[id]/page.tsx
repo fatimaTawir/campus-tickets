@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter, useParams } from "next/navigation"
 import Link from "next/link"
+import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut } from 'lucide-react'
 
 export default function PayPage() {
   const router = useRouter()
@@ -115,19 +116,19 @@ export default function PayPage() {
           <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold mb-3 px-2">Menu</p>
           <div className="flex flex-col gap-1">
             <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
-              <span>🏠</span> Dashboard
+              <Home className="w-4 h-4" /> Dashboard
             </Link>
             <Link href="/" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
-              <span>🎫</span> Browse events
+              <Calendar className="w-4 h-4" /> Browse events
             </Link>
             <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#002868] text-white text-sm font-medium">
-              <span>🎟️</span> My tickets
+              <Ticket className="w-4 h-4" /> My tickets
             </Link>
           </div>
         </nav>
         <div className="px-4 py-4 border-t border-gray-100">
           <Link href="/api/auth/logout" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 text-sm">
-            <span>🚪</span> Sign out
+            <LogOut className="w-4 h-4" /> Sign out
           </Link>
         </div>
       </aside>

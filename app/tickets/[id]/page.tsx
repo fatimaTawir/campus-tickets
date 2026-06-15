@@ -4,6 +4,7 @@ import Link from 'next/link'
 import pool from '@/app/lib/db'
 import QRTicket from '@/app/components/QRTicket'
 import DownloadTicketButton from '@/app/components/DownloadTicketButton'
+import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
 export default async function TicketPage({ params }: { params: Promise<{ id: string }> }) {
@@ -39,7 +40,7 @@ export default async function TicketPage({ params }: { params: Promise<{ id: str
       label: 'Ticket Booked',
       description: 'Your ticket has been reserved',
       done: true,
-      icon: '🎟️',
+      icon: <Ticket className="w-5 h-5 text-blue-600" />,
     },
     {
       label: 'Payment Confirmed',

@@ -1,6 +1,7 @@
 import { getCurrentUser } from '@/app/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut, Star, Check } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -37,25 +38,25 @@ export default async function ProfilePage() {
           <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold mb-3 px-2">Menu</p>
           <div className="flex flex-col gap-1">
             <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
-              <span>🏠</span> Dashboard
+              <Home className="w-4 h-4" /> Dashboard
             </Link>
             <Link href="/" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
-              <span>🎫</span> Browse events
+              <Calendar className="w-4 h-4" /> Browse events
             </Link>
             <Link href="/dashboard/tickets" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
-              <span>🎟️</span> My tickets
+              <Ticket className="w-4 h-4" /> My tickets
             </Link>
             <Link href="/dashboard/notifications" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
-              <span>🔔</span> Notifications
+              <Bell className="w-4 h-4" /> Notifications
             </Link>
           </div>
           <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold mb-3 px-2 mt-6">Account</p>
           <div className="flex flex-col gap-1">
             <Link href="/dashboard/profile" className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#002868] text-white text-sm font-medium">
-              <span>⚙️</span> Profile settings
+              <Settings className="w-4 h-4" /> Profile settings
             </Link>
             <Link href="/help" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
-              <span>❓</span> Help & support
+              <HelpCircle className="w-4 h-4" /> Help & support
             </Link>
             {(user.role === 'organizer' || user.role === 'admin') && (
               <Link href="/organizer" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm">
@@ -66,11 +67,11 @@ export default async function ProfilePage() {
         </nav>
         <div className="px-4 py-4 border-t border-gray-100">
           <div className="bg-[#f0b429]/10 rounded-xl p-3 mb-3">
-            <p className="text-xs font-bold text-[#002868]">⭐ UPGRADE</p>
+            <p className="text-xs font-bold text-[#002868]"><Star className="w-4 h-4 fill-current" /> UPGRADE</p>
             <p className="text-xs text-gray-500">Get Pro features</p>
           </div>
           <Link href="/api/auth/logout" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 text-sm w-full">
-            <span>🚪</span> Sign out
+            <LogOut className="w-4 h-4" /> Sign out
           </Link>
         </div>
       </aside>
@@ -89,7 +90,7 @@ export default async function ProfilePage() {
             <Link href="/" className="text-blue-200 hover:text-white text-sm font-medium">Events</Link>
             <Link href="/about" className="text-blue-200 hover:text-white text-sm font-medium">About</Link>
             <Link href="/help" className="text-blue-200 hover:text-white text-sm font-medium">Help</Link>
-            <span className="text-xl text-blue-200">🔔</span>
+            <Bell className="w-5 h-5 text-blue-200" />
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-[#f0b429] rounded-full flex items-center justify-center text-[#002868] text-xs font-bold">
                 {initials}
