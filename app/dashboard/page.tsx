@@ -169,6 +169,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* Stats */}
+        
           <div className="grid grid-cols-3 gap-4 mb-6">
             <div className="bg-white rounded-2xl border border-gray-200 p-5">
               <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Upcoming Events</p>
