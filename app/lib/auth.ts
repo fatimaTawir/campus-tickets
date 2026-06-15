@@ -11,25 +11,15 @@ export interface UserPayload {
 export async function getCurrentUser(): Promise<UserPayload | null> {
   try {
     const cookieStore = await cookies()
-    
-    // Try both cookie names just in case
     const token = cookieStore.get('token')?.value
-
-    console.log('Auth check - token exists:', !!token)
 
     if (!token) return null
 
-    const decoded = jwt.verify(
-      token, 
-      process.env.JWT_SECRET!
-    ) as UserPayload
-    
-    console.log('Auth check - user:', decoded.email)
-    
+    const secret = process.env.JWT_SECRET || 'usiu_campus_tickets_secret_key_2026'
+    const decoded = jwt.verify(token, secret) as UserPayload
     return decoded
 
   } catch (error) {
-    console.error('Auth error:', error)
     return null
   }
 }
