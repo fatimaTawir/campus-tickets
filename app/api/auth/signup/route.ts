@@ -38,7 +38,6 @@ export async function POST(request: NextRequest) {
     const newUser = result.rows[0]
 
     const secret = process.env.JWT_SECRET || 'usiu_campus_tickets_secret_key_2026'
-
     const token = jwt.sign(
       {
         userId: newUser.id,
@@ -52,16 +51,17 @@ export async function POST(request: NextRequest) {
 
     const response = NextResponse.json({
       message: 'Account created successfully!',
+      token: token,
       user: newUser
     }, { status: 201 })
 
-   response.cookies.set('token', token, {
-  httpOnly: true,
-  secure: true,
-  sameSite: 'lax',
-  path: '/',
-  maxAge: 60 * 60 * 24 * 30
-})
+    response.cookies.set('token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30
+    })
 
     return response
 

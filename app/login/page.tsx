@@ -2,10 +2,9 @@
 
 import Link from "next/link"
 import { useState, Suspense } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 
 function LoginForm() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const redirectUrl = searchParams.get('redirect') || '/dashboard'
   const [loading, setLoading] = useState(false)
@@ -46,7 +45,12 @@ function LoginForm() {
         return
       }
 
-      // Success — go to redirect URL or dashboard
+      // Set cookie client side as backup
+      if (data.token) {
+        document.cookie = `token=${data.token}; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax; Secure`
+      }
+
+      // Go to redirect URL or dashboard
       window.location.href = redirectUrl
 
     } catch (err) {
@@ -117,7 +121,6 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen bg-gray-50 flex flex-col">
 
-      {/* Navbar */}
       <nav className="bg-[#002868] px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="bg-[#BF0A30] text-white text-xs font-bold px-2 py-1 rounded">
@@ -127,11 +130,9 @@ export default function LoginPage() {
         </div>
       </nav>
 
-      {/* Login Form */}
       <div className="flex flex-1 items-center justify-center px-4 py-16">
         <div className="bg-white rounded-2xl border border-gray-200 p-8 w-full max-w-md">
 
-          {/* Header */}
           <div className="text-center mb-8">
             <div className="bg-[#BF0A30] text-white text-sm font-bold px-3 py-1 rounded inline-block mb-4">
               USIU-A
@@ -144,7 +145,6 @@ export default function LoginPage() {
             <LoginForm />
           </Suspense>
 
-          {/* Footer */}
           <p className="text-center text-sm text-gray-500 mt-6">
             Don't have an account?{" "}
             <Link href="/signup" className="text-[#BF0A30] font-medium hover:underline">
