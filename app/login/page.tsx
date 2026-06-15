@@ -46,12 +46,13 @@ function LoginForm() {
       }
 
       // Set cookie client side as backup
-      if (data.token) {
-        document.cookie = `token=${data.token}; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax; Secure`
-      }
+     if (data.token) {
+  localStorage.setItem('token', data.token)
+  document.cookie = `token=${data.token}; path=/; max-age=${60 * 60 * 24 * 30}`
+}
 
       // Go to redirect URL or dashboard
-      window.location.href = redirectUrl
+     window.location.href = redirectUrl
 
     } catch (err) {
       setError("Something went wrong. Please try again.")
