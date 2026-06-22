@@ -51,8 +51,12 @@ function LoginForm() {
   document.cookie = `token=${data.token}; path=/; max-age=${60 * 60 * 24 * 30}`
 }
 
-      // Go to redirect URL or dashboard
-     window.location.href = redirectUrl
+      // Go to redirect URL or organizer/dashboard
+      let finalRedirectUrl = redirectUrl
+      if ((data.user?.role === 'organizer' || data.user?.role === 'admin') && finalRedirectUrl === '/dashboard') {
+        finalRedirectUrl = '/organizer'
+      }
+      window.location.href = finalRedirectUrl
 
     } catch (err) {
       setError("Something went wrong. Please try again.")
