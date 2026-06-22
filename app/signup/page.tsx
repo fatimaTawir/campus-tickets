@@ -51,7 +51,7 @@ export default function SignupPage() {
           firstName: formData.firstName,
           lastName: formData.lastName,
           email: formData.email,
-          studentId: formData.studentId,
+          studentId: role === "student" ? formData.studentId : "",
           password: formData.password,
           role: role,
         }),
@@ -171,17 +171,19 @@ export default function SignupPage() {
               />
             </div>
 
-            <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1">Student ID</label>
-              <input
-                type="text"
-                name="studentId"
-                placeholder="e.g. 123456"
-                value={formData.studentId}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868]"
-              />
-            </div>
+            {role === "student" && (
+              <div>
+                <label className="text-sm font-medium text-gray-700 block mb-1">Student ID</label>
+                <input
+                  type="text"
+                  name="studentId"
+                  placeholder="e.g. 123456"
+                  value={formData.studentId}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868]"
+                />
+              </div>
+            )}
 
             <div>
               <label className="text-sm font-medium text-gray-700 block mb-1">Password</label>

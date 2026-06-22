@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut } from 'lucide-react'
 
 export default function CreateEventPage() {
   const router = useRouter()
@@ -15,9 +14,9 @@ export default function CreateEventPage() {
     venue: "",
     date: "",
     time: "",
-    price: "",
-    priceAmount: "0",
+    price: "0",
     capacity: "100",
+    ticketQuality: "Regular", // New field as requested
     description: "",
   })
 
@@ -36,10 +35,16 @@ export default function CreateEventPage() {
     setLoading(true)
 
     try {
+      // The backend expects priceAmount, so we map price to it
+      const payload = {
+        ...formData,
+        priceAmount: parseFloat(formData.price) || 0,
+      }
+
       const response = await fetch("/api/events", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       })
 
       const data = await response.json()
@@ -59,182 +64,167 @@ export default function CreateEventPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 flex">
-
-      {/* Sidebar */}
-      <aside className="w-64 bg-[#002868] min-h-screen flex flex-col">
-        <div className="p-6 border-b border-blue-800">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="bg-[#BF0A30] text-white text-xs font-bold px-2 py-0.5 rounded">USIU-A</div>
-            <span className="text-white text-sm font-bold">CampusTickets</span>
-          </div>
+    <div className="p-8 max-w-3xl mx-auto">
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-4">
+          {error}
         </div>
-        <nav className="flex-1 p-4">
-          <div className="flex flex-col gap-1">
-            <Link href="/organizer" className="flex items-center gap-3 px-3 py-2 rounded-lg text-blue-200 hover:bg-blue-800 text-sm">
-              <Home className="w-4 h-4" /> Dashboard
-            </Link>
-            <Link href="/organizer/events" className="flex items-center gap-3 px-3 py-2 rounded-lg text-blue-200 hover:bg-blue-800 text-sm">
-              📅 My Events
-            </Link>
-            <Link href="/organizer/create" className="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-800 text-white text-sm">
-              ➕ Create Event
-            </Link>
-            <Link href="/analytics" className="flex items-center gap-3 px-3 py-2 rounded-lg text-blue-200 hover:bg-blue-800 text-sm">
-              📊 Analytics
-            </Link>
-          </div>
-          <div className="mt-6 flex flex-col gap-1">
-            <Link href="/api/auth/logout" className="flex items-center gap-3 px-3 py-2 rounded-lg text-red-300 hover:bg-blue-800 text-sm">
-              <LogOut className="w-4 h-4" /> Sign out
-            </Link>
-          </div>
-        </nav>
-      </aside>
+      )}
 
-      {/* Main content */}
-      <div className="flex-1 p-8 max-w-2xl">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Create New Event</h2>
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-4">
-            {error}
-          </div>
-        )}
-
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 flex flex-col gap-4">
-
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+        <div className="flex flex-col gap-6">
+          {/* Event Title */}
           <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1">Event Title *</label>
+            <label className="text-sm font-semibold text-gray-700 block mb-2">Event Title</label>
             <input
               type="text"
               name="title"
-              placeholder="e.g. Annual Tech Symposium"
+              placeholder="e.g., Annual Tech Symposium"
               value={formData.title}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868]"
+              className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868] focus:border-transparent transition-all"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          {/* Category & Location */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1">Category *</label>
+              <label className="text-sm font-semibold text-gray-700 block mb-2">Category</label>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868]"
+                className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868] focus:border-transparent transition-all bg-white"
               >
                 <option>Academic</option>
-                <option>Sports</option>
+                <option>Career & Professional</option>
+                <option>Club Activity</option>
                 <option>Cultural</option>
-                <option>Workshop</option>
-                <option>Music</option>
-                <option>Career</option>
+                <option>Health & Wellness</option>
+                <option>Sports</option>
               </select>
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1">Venue *</label>
+              <label className="text-sm font-semibold text-gray-700 block mb-2">Location / Venue</label>
               <input
                 type="text"
                 name="venue"
-                placeholder="e.g. Main Hall"
+                placeholder="e.g., Main Hall"
                 value={formData.venue}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868]"
+                className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868] focus:border-transparent transition-all"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          {/* Date & Time */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1">Date *</label>
+              <label className="text-sm font-semibold text-gray-700 block mb-2">Date</label>
               <input
                 type="date"
                 name="date"
                 value={formData.date}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868]"
+                className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868] focus:border-transparent transition-all"
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1">Time *</label>
+              <label className="text-sm font-semibold text-gray-700 block mb-2">Time</label>
               <input
                 type="time"
                 name="time"
                 value={formData.time}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868]"
+                className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868] focus:border-transparent transition-all"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          {/* Ticket Info */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1">Ticket Price</label>
-              <input
-                type="text"
-                name="price"
-                placeholder="e.g. KES 500 or Free"
-                value={formData.price}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868]"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1">Price Amount (KES)</label>
+              <label className="text-sm font-semibold text-gray-700 block mb-2">Ticket Price (UGX)</label>
               <input
                 type="number"
-                name="priceAmount"
-                placeholder="0 for free"
-                value={formData.priceAmount}
+                name="price"
+                placeholder="0"
+                value={formData.price}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868]"
+                className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868] focus:border-transparent transition-all"
               />
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-700 block mb-2">Total Capacity</label>
+              <input
+                type="number"
+                name="capacity"
+                value={formData.capacity}
+                onChange={handleChange}
+                className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868] focus:border-transparent transition-all"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-700 block mb-2">Ticket Quality/Type</label>
+              <select
+                name="ticketQuality"
+                value={formData.ticketQuality}
+                onChange={handleChange}
+                className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868] focus:border-transparent transition-all bg-white"
+              >
+                <option>Regular</option>
+                <option>VIP</option>
+                <option>VVIP</option>
+                <option>Early Bird</option>
+                <option>Student</option>
+              </select>
             </div>
           </div>
 
+          {/* Event Description */}
           <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1">Total Capacity</label>
-            <input
-              type="number"
-              name="capacity"
-              value={formData.capacity}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868]"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1">Event Description</label>
+            <label className="text-sm font-semibold text-gray-700 block mb-2">Event Description</label>
             <textarea
               name="description"
               placeholder="Describe what the event is about..."
               value={formData.description}
               onChange={handleChange}
-              rows={4}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868]"
+              rows={5}
+              className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868] focus:border-transparent transition-all resize-none"
             />
           </div>
 
-          <div className="flex gap-3 pt-2">
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className="bg-[#002868] text-white px-8 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-900 disabled:opacity-50"
-            >
-              {loading ? "Publishing..." : "Publish Event"}
-            </button>
+          {/* Banner Image */}
+          <div>
+            <label className="text-sm font-semibold text-gray-700 block mb-2">Banner Image (Optional)</label>
+            <div className="w-full border border-gray-200 rounded-lg p-2 flex items-center bg-gray-50">
+               <input
+                type="file"
+                name="bannerImage"
+                className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300"
+              />
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex justify-end items-center gap-4 pt-4 border-t border-gray-100 mt-2">
             <Link
               href="/organizer"
-              className="border border-gray-300 text-gray-600 px-8 py-2.5 rounded-lg text-sm hover:bg-gray-50"
+              className="text-gray-500 text-sm font-medium hover:text-gray-800 transition-colors"
             >
               Cancel
             </Link>
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="bg-[#002868] text-white px-8 py-2.5 rounded-lg text-sm font-semibold shadow-sm hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#002868] disabled:opacity-50 transition-all"
+            >
+              {loading ? "Publishing..." : "Publish Event"}
+            </button>
           </div>
 
         </div>
       </div>
-    </main>
+    </div>
   )
 }
