@@ -68,15 +68,15 @@ export default async function OrganizerLayout({
 
           <div className="px-6 py-2 mt-auto mb-4">
             <nav className="flex flex-col gap-1 mb-4">
-              <Link href="/dashboard/profile" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-medium transition-colors">
+              <Link href="/organizer/profile" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-medium transition-colors">
                 <Settings className="w-4 h-4" /> Profile settings
               </Link>
-              <Link href="/help" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-medium transition-colors">
+              <Link href="/organizer/help" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-medium transition-colors">
                 <HelpCircle className="w-4 h-4" /> Help & support
               </Link>
             </nav>
 
-            <Link href="/dashboard/upgrade" className="block bg-blue-50/50 border border-blue-100 rounded-xl p-4 mb-4 hover:bg-blue-100 transition-colors">
+            <Link href="/organizer/upgrade" className="block bg-blue-50/50 border border-blue-100 rounded-xl p-4 mb-4 hover:bg-blue-100 transition-colors">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xl">🚀</span>
                 <p className="text-xs font-bold text-[#002868]">UPGRADE</p>
