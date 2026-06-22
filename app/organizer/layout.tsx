@@ -32,9 +32,9 @@ export default async function OrganizerLayout({
           <Link href="/about" className="text-sm font-medium hover:text-blue-200 transition-colors">About</Link>
           <Link href="/help" className="text-sm font-medium hover:text-blue-200 transition-colors">Help</Link>
           
-          <button className="relative p-1 hover:text-blue-200 transition-colors">
+          <Link href="/dashboard/notifications" className="relative p-1 hover:text-blue-200 transition-colors">
             <Bell className="w-5 h-5" />
-          </button>
+          </Link>
           
           <div className="flex items-center gap-2 bg-[#001f52] px-3 py-1.5 rounded-full cursor-pointer hover:bg-[#001840] transition-colors border border-blue-800">
             <div className="w-6 h-6 bg-[#f0b429] rounded-full flex items-center justify-center text-[#002868] text-xs font-bold">
@@ -60,9 +60,6 @@ export default async function OrganizerLayout({
               <Link href="/organizer/create" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-medium transition-colors">
                 <PlusCircle className="w-4 h-4" /> Create event
               </Link>
-              <Link href="/organizer/reports" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-medium transition-colors">
-                <BarChart2 className="w-4 h-4" /> Reports
-              </Link>
               <Link href="/organizer/audit" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-medium transition-colors">
                 <FileText className="w-4 h-4" /> Audit logs
               </Link>
@@ -79,13 +76,13 @@ export default async function OrganizerLayout({
               </Link>
             </nav>
 
-            <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-4 mb-4">
+            <Link href="/dashboard/upgrade" className="block bg-blue-50/50 border border-blue-100 rounded-xl p-4 mb-4 hover:bg-blue-100 transition-colors">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xl">🚀</span>
                 <p className="text-xs font-bold text-[#002868]">UPGRADE</p>
               </div>
               <p className="text-[11px] text-gray-500 mb-2">Get CETS Pro features</p>
-            </div>
+            </Link>
 
             <Link href="/api/auth/logout" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-600 hover:bg-red-50 text-sm font-medium transition-colors">
               <LogOut className="w-4 h-4" /> Sign out
