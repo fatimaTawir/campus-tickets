@@ -1,7 +1,7 @@
 import { getCurrentUser } from '@/app/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Home, Calendar, PlusCircle, BarChart2, FileText, Settings, HelpCircle, LogOut, Bell } from 'lucide-react'
+import { Home, Calendar, PlusCircle, BarChart2, FileText, Settings, HelpCircle, LogOut, Bell, Rocket } from 'lucide-react'
 
 export default async function OrganizerLayout({
   children,
@@ -23,12 +23,12 @@ export default async function OrganizerLayout({
           <div className="bg-[#f0b429] rounded p-1.5 flex items-center justify-center">
             <TicketIcon className="w-5 h-5 text-[#002868]" />
           </div>
-          <span className="font-bold text-lg tracking-wide">CETS</span>
-          <span className="text-blue-300 text-sm">· Campus Events</span>
+          <span className="font-bold text-lg tracking-wide">USIU</span>
+          <span className="text-blue-300 text-sm">· Campus</span>
         </div>
         
         <div className="flex items-center gap-6">
-          <Link href="/events" className="text-sm font-medium hover:text-blue-200 transition-colors">Events</Link>
+          <Link href="/" className="text-sm font-medium hover:text-blue-200 transition-colors">Events</Link>
           <Link href="/about" className="text-sm font-medium hover:text-blue-200 transition-colors">About</Link>
           <Link href="/help" className="text-sm font-medium hover:text-blue-200 transition-colors">Help</Link>
           
@@ -78,7 +78,7 @@ export default async function OrganizerLayout({
 
             <Link href="/organizer/upgrade" className="block bg-blue-50/50 border border-blue-100 rounded-xl p-4 mb-4 hover:bg-blue-100 transition-colors">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xl">🚀</span>
+                <Rocket className="w-5 h-5 text-[#f0b429]" />
                 <p className="text-xs font-bold text-[#002868]">UPGRADE</p>
               </div>
               <p className="text-[11px] text-gray-500 mb-2">Get CETS Pro features</p>

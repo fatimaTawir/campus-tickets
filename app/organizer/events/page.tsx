@@ -2,7 +2,7 @@ import { getCurrentUser } from '@/app/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import pool from '@/app/lib/db'
-import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut } from 'lucide-react'
+import { Calendar, MapPin, Tag, Banknote, Eye } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,98 +27,72 @@ export default async function OrganizerEventsPage() {
   const events = eventsResult.rows
 
   return (
-    <main className="min-h-screen bg-gray-50 flex">
-
-      {/* Sidebar */}
-      <aside className="w-64 bg-[#002868] min-h-screen flex flex-col">
-        <div className="p-6 border-b border-blue-800">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="bg-[#BF0A30] text-white text-xs font-bold px-2 py-0.5 rounded">USIU-A</div>
-            <span className="text-white text-sm font-bold">CampusTickets</span>
-          </div>
-          <p className="text-blue-300 text-xs mt-2">{user.firstName} · Organizer</p>
+    <div className="p-8 max-w-6xl mx-auto">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-1">My Events</h2>
+          <p className="text-sm text-gray-500">Manage your events and track ticket sales.</p>
         </div>
-        <nav className="flex-1 p-4">
-          <div className="flex flex-col gap-1">
-            <Link href="/organizer" className="flex items-center gap-3 px-3 py-2 rounded-lg text-blue-200 hover:bg-blue-800 text-sm">
-              <Home className="w-4 h-4" /> Dashboard
-            </Link>
-            <Link href="/organizer/events" className="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-800 text-white text-sm">
-              📅 My Events
-            </Link>
-            <Link href="/organizer/create" className="flex items-center gap-3 px-3 py-2 rounded-lg text-blue-200 hover:bg-blue-800 text-sm">
-              ➕ Create Event
-            </Link>
-            <Link href="/analytics" className="flex items-center gap-3 px-3 py-2 rounded-lg text-blue-200 hover:bg-blue-800 text-sm">
-              📊 Analytics
-            </Link>
-          </div>
-          <div className="mt-6 flex flex-col gap-1">
-            <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2 rounded-lg text-blue-200 hover:bg-blue-800 text-sm">
-              👤 Profile
-            </Link>
-            <Link href="/api/auth/logout" className="flex items-center gap-3 px-3 py-2 rounded-lg text-red-300 hover:bg-blue-800 text-sm">
-              <LogOut className="w-4 h-4" /> Sign out
-            </Link>
-          </div>
-        </nav>
-      </aside>
+        <Link
+          href="/organizer/create"
+          className="bg-[#002868] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-blue-900 shadow-sm transition-colors"
+        >
+          Create Event
+        </Link>
+      </div>
 
-      {/* Main content */}
-      <div className="flex-1 p-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">My Events</h2>
+      {events.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-gray-100 p-16 text-center shadow-sm flex flex-col items-center">
+          <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4">
+            <Calendar className="w-8 h-8 text-blue-300" />
+          </div>
+          <p className="text-gray-500 text-sm font-medium mb-6">You haven't created any events yet.</p>
           <Link
             href="/organizer/create"
-            className="bg-[#002868] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-blue-900"
+            className="inline-block bg-[#002868] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-blue-900 shadow-sm transition-colors"
           >
-            + Create Event
+            Create your first event
           </Link>
         </div>
-
-        {events.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-200 p-16 text-center">
-            <p className="text-4xl mb-3">📅</p>
-            <p className="text-gray-500 text-sm">You haven't created any events yet.</p>
-            <Link
-              href="/organizer/create"
-              className="inline-block mt-4 bg-[#002868] text-white px-5 py-2 rounded-lg text-sm hover:bg-blue-900"
-            >
-              Create your first event
-            </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-4">
-            {events.map((event: any) => (
-              <div key={event.id} className="bg-white rounded-xl border border-gray-200 p-5 flex items-center justify-between">
+      ) : (
+        <div className="grid grid-cols-1 gap-4">
+          {events.map((event: any) => {
+            const dateObj = new Date(event.date)
+            const formattedDate = dateObj.toLocaleDateString()
+            return (
+              <div key={event.id} className="bg-white rounded-2xl border border-gray-100 p-6 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
                 <div>
-                  <h3 className="font-semibold text-gray-800">{event.title}</h3>
-                  <p className="text-sm text-gray-500 mt-1">📅 {event.date} · 📍 {event.venue}</p>
-                  <p className="text-sm text-gray-500">🏷️ {event.category} · 💰 {event.price}</p>
+                  <h3 className="font-bold text-lg text-gray-800 mb-2">{event.title}</h3>
+                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                    <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-gray-400" /> {formattedDate}</span>
+                    <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-gray-400" /> {event.venue}</span>
+                    <span className="flex items-center gap-1.5"><Tag className="w-4 h-4 text-gray-400" /> {event.category}</span>
+                    <span className="flex items-center gap-1.5"><Banknote className="w-4 h-4 text-gray-400" /> UGX {event.price_amount}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-6 text-center">
+                <div className="flex items-center gap-8 text-center">
                   <div>
-                    <p className="text-xl font-bold text-[#002868]">{event.tickets_sold_count}</p>
-                    <p className="text-xs text-gray-400">Tickets sold</p>
+                    <p className="text-2xl font-bold text-[#002868]">{event.tickets_sold_count}</p>
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Tickets</p>
                   </div>
                   <div>
-                    <p className="text-xl font-bold text-green-600">KES {parseFloat(event.revenue || 0).toLocaleString()}</p>
-                    <p className="text-xs text-gray-400">Revenue</p>
+                    <p className="text-2xl font-bold text-green-600">UGX {parseFloat(event.revenue || 0).toLocaleString()}</p>
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Revenue</p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="pl-4 border-l border-gray-100">
                     <Link
                       href={`/events/${event.id}`}
-                      className="bg-[#002868] text-white text-xs px-3 py-1.5 rounded-lg hover:bg-blue-900"
+                      className="flex items-center gap-2 text-[#002868] text-sm font-semibold hover:text-blue-800 transition-colors bg-blue-50 px-4 py-2 rounded-xl"
                     >
-                      View
+                      <Eye className="w-4 h-4" /> View
                     </Link>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </main>
+            )
+          })}
+        </div>
+      )}
+    </div>
   )
 }
