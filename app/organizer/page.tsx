@@ -83,7 +83,7 @@ export default async function OrganizerDashboard() {
               <tbody>
                 {events.map((event: any) => {
                   const date = new Date(event.date)
-                  const formattedDate = \`\${date.getMonth() + 1}/\${date.getDate()}/\${date.getFullYear()}\`
+                  const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
                   
                   return (
                     <tr key={event.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
@@ -99,7 +99,7 @@ export default async function OrganizerDashboard() {
                           <div className="w-24 h-1.5 bg-gray-100 rounded-full overflow-hidden">
                             <div 
                               className="h-full bg-gray-300 rounded-full" 
-                              style={{ width: \`\${Math.min(100, (event.tickets_sold_count / event.capacity) * 100)}%\` }}
+                              style={{ width: `${Math.min(100, (event.tickets_sold_count / event.capacity) * 100)}%` }}
                             />
                           </div>
                           <span className="text-xs font-medium text-gray-500 w-12 text-right">
@@ -108,7 +108,7 @@ export default async function OrganizerDashboard() {
                         </div>
                       </td>
                       <td className="py-4 px-4 text-right">
-                        <Link href={\`/organizer/events/\${event.id}\`} className="text-sm font-medium text-[#002868] hover:text-blue-800 transition-colors">
+                        <Link href={`/organizer/events/${event.id}`} className="text-sm font-medium text-[#002868] hover:text-blue-800 transition-colors">
                           Dashboard
                         </Link>
                       </td>
