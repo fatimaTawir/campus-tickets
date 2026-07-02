@@ -67,7 +67,7 @@ export default async function OrganizerEventsPage() {
                     <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-gray-400" /> {formattedDate}</span>
                     <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-gray-400" /> {event.venue}</span>
                     <span className="flex items-center gap-1.5"><Tag className="w-4 h-4 text-gray-400" /> {event.category}</span>
-                    <span className="flex items-center gap-1.5"><Banknote className="w-4 h-4 text-gray-400" /> UGX {event.price_amount}</span>
+                    <span className="flex items-center gap-1.5"><Banknote className="w-4 h-4 text-gray-400" /> KSH {event.price_amount}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-8 text-center">
@@ -76,7 +76,7 @@ export default async function OrganizerEventsPage() {
                     <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Tickets</p>
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-green-600">UGX {parseFloat(event.revenue || 0).toLocaleString()}</p>
+                    <p className="text-2xl font-bold text-green-600">KSH{parseFloat(event.revenue || 0).toLocaleString()}</p>
                     <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Revenue</p>
                   </div>
                   <div className="pl-4 border-l border-gray-100">

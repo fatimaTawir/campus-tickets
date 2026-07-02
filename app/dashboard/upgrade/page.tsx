@@ -1,7 +1,7 @@
 import { getCurrentUser } from '@/app/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut, Star, Check } from 'lucide-react'
+import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut, Star, Check, BarChart2 } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -44,7 +44,7 @@ export default async function UpgradePage() {
             <Link href="/dashboard/profile" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm"><Settings className="w-4 h-4" /> Profile settings</Link>
             <Link href="/help" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm"><HelpCircle className="w-4 h-4" /> Help & support</Link>
             {(user.role === 'organizer' || user.role === 'admin') && (
-              <Link href="/organizer" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm"><span>📊</span> Organizer</Link>
+              <Link href="/organizer" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-100 text-sm"><BarChart2 className="w-4 h-4" /> Organizer</Link>
             )}
           </div>
         </nav>

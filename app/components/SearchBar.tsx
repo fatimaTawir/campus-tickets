@@ -32,7 +32,7 @@ export default function SearchBar() {
       />
       <button
         onClick={handleSearch}
-        className="bg-[#BF0A30] text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-red-700 whitespace-nowrap"
+        className="bg-[#002868] text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-blue-900 whitespace-nowrap transition-colors"
       >
         Search
       </button>
