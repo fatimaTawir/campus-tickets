@@ -1,7 +1,7 @@
 import { getCurrentUser } from '@/app/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Home, Calendar, PlusCircle, BarChart2, FileText, Settings, HelpCircle, LogOut, Bell, Rocket } from 'lucide-react'
+import { Home, Calendar, PlusCircle, BarChart2, FileText, Settings, HelpCircle, LogOut, Bell, Rocket, TrendingUp } from 'lucide-react'
 
 export default async function OrganizerLayout({
   children,
@@ -23,8 +23,8 @@ export default async function OrganizerLayout({
           <div className="bg-[#f0b429] rounded p-1.5 flex items-center justify-center">
             <TicketIcon className="w-5 h-5 text-[#002868]" />
           </div>
-          <span className="font-bold text-lg tracking-wide">USIU</span>
-          <span className="text-blue-300 text-sm">· Campus</span>
+          <span className="font-bold text-lg tracking-wide">CETS</span>
+          <span className="text-[#f0b429] text-sm font-semibold">· Campus Events</span>
         </div>
         
         <div className="flex items-center gap-6">
@@ -59,6 +59,9 @@ export default async function OrganizerLayout({
               </Link>
               <Link href="/organizer/create" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-medium transition-colors">
                 <PlusCircle className="w-4 h-4" /> Create event
+              </Link>
+              <Link href="/analytics" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-medium transition-colors">
+                <TrendingUp className="w-4 h-4" /> Reports
               </Link>
               <Link href="/organizer/audit" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-medium transition-colors">
                 <FileText className="w-4 h-4" /> Audit logs

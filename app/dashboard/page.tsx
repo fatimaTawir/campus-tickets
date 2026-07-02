@@ -362,7 +362,7 @@ export default async function DashboardPage() {
                             </p>
                             <p className="text-xs text-gray-400 truncate mt-0.5">📍 {event.venue}</p>
                             <p className="text-xs font-semibold text-[#002868] mt-1">
-                              UGX {parseFloat(String(event.price_amount)).toLocaleString()}
+                              KSH {parseFloat(String(event.price_amount)).toLocaleString()}
                             </p>
                           </div>
                           <ArrowRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-[#002868] group-hover:translate-x-1 transition-all mt-1 flex-shrink-0" />

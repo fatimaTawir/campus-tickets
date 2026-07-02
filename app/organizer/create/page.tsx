@@ -144,7 +144,7 @@ export default function CreateEventPage() {
           {/* Ticket Info */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div>
-              <label className="text-sm font-semibold text-gray-700 block mb-2">Ticket Price (UGX)</label>
+              <label className="text-sm font-semibold text-gray-700 block mb-2">Ticket Price (KSH)</label>
               <input
                 type="number"
                 name="price"
