@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter, useParams } from "next/navigation"
 import Link from "next/link"
 import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut } from 'lucide-react'
@@ -17,6 +17,25 @@ export default function PayPage() {
   const [messageType, setMessageType] = useState<"success" | "error">("success")
   const [stkSent, setStkSent] = useState(false)
   const [step, setStep] = useState(2) // 1=Select, 2=Payment, 3=Confirm
+  const [ticketDetails, setTicketDetails] = useState<any>(null)
+
+  useEffect(() => {
+    async function loadTicket() {
+      try {
+        const response = await fetch('/api/my-tickets')
+        const data = await response.json()
+        if (data.tickets) {
+          const match = data.tickets.find((t: any) => String(t.id) === String(ticketId))
+          if (match) {
+            setTicketDetails(match)
+          }
+        }
+      } catch (err) {
+        console.error(err)
+      }
+    }
+    if (ticketId) loadTicket()
+  }, [ticketId])
 
   async function handlePay() {
     if (paymentMethod === "mpesa" && !phone) {
@@ -239,28 +258,50 @@ export default function PayPage() {
               <div className="flex flex-col gap-2 mb-4">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Ticket</span>
-                  <span className="text-gray-800 font-medium">—</span>
+                  <span className="text-gray-800 font-medium max-w-[150px] truncate text-right">
+                    {ticketDetails?.title || "Campus Event"}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Price</span>
+                  <span className="text-gray-800 font-medium">
+                    {ticketDetails ? (parseFloat(ticketDetails.price_amount) === 0 ? "Free" : `KSH ${parseFloat(ticketDetails.price_amount).toLocaleString()}`) : "—"}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Service fee</span>
-                  <span className="text-gray-800">—</span>
+                  <span className="text-gray-800 font-medium">
+                    {ticketDetails ? (parseFloat(ticketDetails.price_amount) === 0 ? "KSH 0" : "KSH 0") : "—"}
+                  </span>
                 </div>
               </div>
               <div className="border-t border-gray-100 pt-3 mb-6">
                 <div className="flex justify-between font-bold text-gray-800">
                   <span>Total</span>
-                  <span className="text-[#002868]">—</span>
+                  <span className="text-[#002868]">
+                    {ticketDetails ? (parseFloat(ticketDetails.price_amount) === 0 ? "Free" : `KSH ${parseFloat(ticketDetails.price_amount).toLocaleString()}`) : "—"}
+                  </span>
                 </div>
               </div>
 
               {!stkSent && (
-                <button
-                  onClick={handlePay}
-                  disabled={loading}
-                  className="w-full py-3 rounded-xl text-sm font-bold bg-[#002868] text-white hover:bg-blue-900 disabled:opacity-50 mb-2"
-                >
-                  {loading ? "Processing..." : "Confirm & Pay"}
-                </button>
+                <div className="flex flex-col gap-2 mb-2">
+                  <button
+                    onClick={handlePay}
+                    disabled={loading}
+                    className="w-full py-3 rounded-xl text-sm font-bold bg-[#002868] text-white hover:bg-blue-900 disabled:opacity-50"
+                  >
+                    {loading ? "Processing..." : "Confirm & Pay"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleManualConfirm}
+                    disabled={confirming}
+                    className="w-full py-3 rounded-xl text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors border border-gray-200"
+                  >
+                    {confirming ? "Confirming..." : "Simulate Payment (Test Mode)"}
+                  </button>
+                </div>
               )}
               <Link href="/dashboard" className="block text-center text-sm text-gray-500 hover:text-gray-700">
                 Cancel & Go Back

@@ -125,15 +125,15 @@ export default async function Home({
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
 
         <p className="text-[#f0b429] text-xs font-bold uppercase tracking-widest mb-4">
-          UNIVERSITY OF TECHNOLOGY
+          UNITED STATES INTERNATIONAL UNIVERSITY – AFRICA
         </p>
 
         <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight max-w-3xl">
-          Discover &amp; attend campus events
+          Your Campus. Your Events.
         </h2>
 
         <p className="text-blue-200 text-base md:text-lg mb-8 max-w-2xl font-light">
-          Browse seminars, sports days, cultural nights and club activities — buy your ticket in seconds.
+          Buy tickets for USIU-A events — sports, conferences, culture &amp; more.
         </p>
 
         <div className="w-full max-w-xl mb-6">
