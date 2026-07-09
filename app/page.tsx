@@ -227,7 +227,7 @@ export default async function Home({
                 date={event.date}
                 time={event.time}
                 venue={event.venue}
-                price={event.price}
+                priceAmount={event.price_amount}
                 color={
                   categoryColors[event.category] ||
                   "bg-gray-100 text-gray-700"

@@ -14,9 +14,9 @@ export default async function BookingConfirmedPage({ params }: { params: Promise
   const { id } = await params
 
   const result = await pool.query(
-    `SELECT t.id, t.qr_code, t.payment_status, t.created_at,
+    `SELECT t.id, t.qr_code, t.payment_status, t.created_at, t.quantity,
             e.title, e.venue, e.date, e.time,
-            u.first_name, u.last_name
+            u.first_name, u.last_name, u.email
      FROM tickets t
      JOIN events e ON t.event_id = e.id
      JOIN users u ON t.user_id = u.id
@@ -29,6 +29,7 @@ export default async function BookingConfirmedPage({ params }: { params: Promise
   const ticket = result.rows[0]
   const bookingRef = `CETS-${ticket.qr_code.replace('USIU-', '').substring(0, 6).toUpperCase()}`
   const initials = `${user.firstName?.[0] ?? ''}`.toUpperCase()
+  const quantity = ticket.quantity ?? 1
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -91,7 +92,7 @@ export default async function BookingConfirmedPage({ params }: { params: Promise
         {/* Bottom */}
         <div className="px-4 py-4 border-t border-gray-100">
           <div className="bg-[#f0b429]/10 rounded-xl p-3 mb-3">
-            <p className="text-xs font-bold text-[#002868]"><Star className="w-4 h-4 fill-current" /> UPGRADE</p>
+            <p className="text-xs font-bold text-[#002868]"><Star className="w-4 h-4 fill-current inline mr-1" />UPGRADE</p>
             <p className="text-xs text-gray-500">Get Pro features</p>
           </div>
           <Link
@@ -156,11 +157,13 @@ export default async function BookingConfirmedPage({ params }: { params: Promise
                   <p className="text-sm text-gray-500 mb-1">📅 {ticket.date} · {ticket.time}</p>
                   <p className="text-sm text-gray-500 mb-1">📍 {ticket.venue}</p>
                   <p className="text-sm text-gray-500">🎓 {ticket.first_name} {ticket.last_name}</p>
+
+                  {/* Quantity display */}
                   <div className="mt-4">
                     <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Quantity</p>
                     <div className="flex items-center gap-2">
                       <span className="text-2xl">🎟️</span>
-                      <p className="font-bold text-gray-800">1 Ticket(s)</p>
+                      <p className="font-bold text-gray-800">{quantity} Ticket{quantity > 1 ? 's' : ''}</p>
                     </div>
                   </div>
                 </div>
@@ -178,23 +181,23 @@ export default async function BookingConfirmedPage({ params }: { params: Promise
               </div>
 
               {/* Buttons */}
-              <div className="flex flex-col gap-3">
-                <DownloadTicketButton
-                  ticketId={ticket.id}
-                  eventTitle={ticket.title}
-                  eventDate={`${ticket.date} · ${ticket.time}`}
-                  eventVenue={ticket.venue}
-                  studentName={`${ticket.first_name} ${ticket.last_name}`}
-                  qrCode={ticket.qr_code}
-                  bookingRef={bookingRef}
-                />
-                <Link
-                  href="/dashboard"
-                  className="block text-center border border-gray-300 text-gray-600 py-3 rounded-xl text-sm hover:bg-gray-50"
-                >
-                  Back to Dashboard
-                </Link>
-              </div>
+              <DownloadTicketButton
+                ticketId={ticket.id}
+                eventTitle={ticket.title}
+                eventDate={`${ticket.date} · ${ticket.time}`}
+                eventVenue={ticket.venue}
+                studentName={`${ticket.first_name} ${ticket.last_name}`}
+                studentEmail={ticket.email}
+                qrCode={ticket.qr_code}
+                bookingRef={bookingRef}
+                quantity={quantity}
+              />
+              <Link
+                href="/dashboard"
+                className="block text-center border border-gray-300 text-gray-600 py-3 rounded-xl text-sm hover:bg-gray-50 mt-3"
+              >
+                Back to Dashboard
+              </Link>
             </div>
 
           </div>
