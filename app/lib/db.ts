@@ -11,6 +11,9 @@ const pool = new Pool({
   }
 })
 
+// Auto-migrate schema for missing columns
+pool.query(`ALTER TABLE tickets ADD COLUMN IF NOT EXISTS quantity INTEGER DEFAULT 1;`).catch(console.error)
+
 const rawQuery = pool.query.bind(pool)
 
 function getQueryText(query: unknown) {
