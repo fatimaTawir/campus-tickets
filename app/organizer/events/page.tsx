@@ -2,7 +2,7 @@ import { getCurrentUser } from '@/app/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import pool from '@/app/lib/db'
-import { Calendar, MapPin, Tag, Banknote, Eye } from 'lucide-react'
+import { Calendar, MapPin, Tag, Banknote, Eye, BarChart2 } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -79,10 +79,16 @@ export default async function OrganizerEventsPage() {
                     <p className="text-2xl font-bold text-green-600">KSH{parseFloat(event.revenue || 0).toLocaleString()}</p>
                     <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Revenue</p>
                   </div>
-                  <div className="pl-4 border-l border-gray-100">
+                  <div className="pl-4 border-l border-gray-100 flex items-center gap-2">
+                    <Link
+                      href={`/organizer/events/${event.id}`}
+                      className="flex items-center gap-2 text-[#002868] text-sm font-semibold hover:text-blue-800 transition-colors bg-blue-50 px-4 py-2 rounded-xl"
+                    >
+                      <BarChart2 className="w-4 h-4" /> Dashboard
+                    </Link>
                     <Link
                       href={`/events/${event.id}`}
-                      className="flex items-center gap-2 text-[#002868] text-sm font-semibold hover:text-blue-800 transition-colors bg-blue-50 px-4 py-2 rounded-xl"
+                      className="flex items-center gap-2 text-gray-500 text-sm font-semibold hover:text-gray-700 transition-colors bg-gray-50 px-4 py-2 rounded-xl"
                     >
                       <Eye className="w-4 h-4" /> View
                     </Link>

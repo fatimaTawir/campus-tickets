@@ -54,10 +54,14 @@ export default function PayPage() {
     setMessage("")
 
     try {
+      const amount = ticketDetails && parseFloat(ticketDetails.price_amount) > 0
+        ? parseFloat(ticketDetails.price_amount) * quantity
+        : 1;
+
       const response = await fetch("/api/mpesa/pay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, amount: 1, ticketId, eventTitle: "Campus Event" }),
+        body: JSON.stringify({ phone, amount, ticketId, eventTitle: ticketDetails?.title || "Campus Event" }),
       })
 
       const data = await response.json()
@@ -109,7 +113,7 @@ export default function PayPage() {
       const res = await fetch("/api/tickets/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ticketId }),
+        body: JSON.stringify({ ticketId, quantity }),
       })
       const data = await res.json()
       if (res.ok && data.success) {

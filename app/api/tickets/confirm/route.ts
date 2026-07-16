@@ -3,15 +3,15 @@ import pool from '@/app/lib/db'
 
 export async function POST(request: NextRequest) {
   try {
-    const { ticketId } = await request.json()
+    const { ticketId, quantity = 1 } = await request.json()
 
     if (!ticketId) {
       return NextResponse.json({ error: 'Ticket ID required' }, { status: 400 })
     }
 
     const result = await pool.query(
-      'UPDATE tickets SET payment_status = $1 WHERE id = $2 RETURNING id, payment_status',
-      ['paid', ticketId]
+      'UPDATE tickets SET payment_status = $1, quantity = $2 WHERE id = $3 RETURNING id, payment_status, quantity',
+      ['paid', quantity, ticketId]
     )
 
     console.log('Confirm result:', result.rows)
