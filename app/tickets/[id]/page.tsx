@@ -77,23 +77,9 @@ export default async function TicketPage({ params }: { params: Promise<{ id: str
           </div>
           <Link href="/" className="text-white text-lg font-bold">CampusTickets</Link>
         </div>
-        <div className="flex gap-4 items-center">
-          <Link href="/" className="text-blue-200 hover:text-white text-sm">Events</Link>
-          <Link href="/about" className="text-blue-200 hover:text-white text-sm">About</Link>
-          <Link href="/help" className="text-blue-200 hover:text-white text-sm">Help</Link>
-          {user ? (
-            <Link href="/dashboard" className="text-blue-200 hover:text-white text-sm">
-              Dashboard
-            </Link>
-          ) : (
-            <>
-              <Link href="/login" className="text-blue-200 hover:text-white text-sm">Sign in</Link>
-              <Link href="/signup" className="bg-[#f0b429] text-[#002868] px-4 py-1.5 rounded-xl text-sm font-bold hover:bg-yellow-400">
-                Register
-              </Link>
-            </>
-          )}
-        </div>
+        <Link href="/dashboard" className="text-blue-200 hover:text-white text-sm">
+          ← Back to Dashboard
+        </Link>
       </nav>
 
       <div className="max-w-2xl mx-auto px-6 py-12">

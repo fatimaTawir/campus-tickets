@@ -48,8 +48,7 @@ function LoginForm() {
       // Set cookie client side as backup
      if (data.token) {
   localStorage.setItem('token', data.token)
-  const secure = window.location.protocol === 'https:' ? '; Secure' : ''
-  document.cookie = `token=${data.token}; path=/; max-age=${60 * 60 * 24 * 30}${secure}`
+  document.cookie = `token=${data.token}; path=/; max-age=${60 * 60 * 24 * 30}`
 }
 
       // Go to redirect URL or organizer/dashboard

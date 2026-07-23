@@ -37,7 +37,7 @@ const mainNav: NavItem[] = [
   { href: '/organizer', label: 'Dashboard', icon: <Home className="w-4 h-4" />, exact: true },
   { href: '/organizer/events', label: 'My events', icon: <Calendar className="w-4 h-4" /> },
   { href: '/organizer/create', label: 'Create event', icon: <PlusCircle className="w-4 h-4" />, exact: true },
-  { href: '/organizer/reports', label: 'Reports', icon: <TrendingUp className="w-4 h-4" />, exact: true },
+  { href: '/analytics', label: 'Reports', icon: <TrendingUp className="w-4 h-4" />, exact: true },
   { href: '/organizer/audit', label: 'Audit logs', icon: <FileText className="w-4 h-4" />, exact: true },
 ]
 

@@ -59,16 +59,18 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
           <span className="font-bold text-white">CETS</span>
           <span className="text-[#f0b429] text-sm font-semibold">· Campus Events</span>
         </div>
-        <div className="flex gap-4 items-center">
-          <Link href="/" className="text-blue-200 hover:text-white text-sm">Events</Link>
+        <div className="flex gap-6 items-center">
+          <Link href="/" className="text-blue-200 hover:text-white text-sm font-medium">Events</Link>
+          <Link href="/about" className="text-blue-200 hover:text-white text-sm font-medium">About</Link>
+          <Link href="/help" className="text-blue-200 hover:text-white text-sm font-medium">Help</Link>
           {user ? (
-            <Link href="/dashboard" className="text-blue-200 hover:text-white text-sm">
+            <Link href="/dashboard" className="text-blue-200 hover:text-white text-sm font-medium">
               Dashboard
             </Link>
           ) : (
             <>
-              <Link href="/login" className="text-blue-200 hover:text-white text-sm">Log in</Link>
-              <Link href="/signup" className="bg-[#f0b429] text-[#002868] px-4 py-1.5 rounded-xl text-sm font-bold hover:bg-yellow-400">
+              <Link href="/login" className="text-blue-200 hover:text-white text-sm font-medium">Sign in</Link>
+              <Link href="/signup" className="bg-[#f0b429] text-[#002868] px-5 py-2 rounded-xl text-sm font-bold hover:bg-yellow-400">
                 Register
               </Link>
             </>

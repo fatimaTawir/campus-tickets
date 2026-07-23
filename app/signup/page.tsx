@@ -64,13 +64,8 @@ export default function SignupPage() {
         return
       }
 
-      // Success — auto-login and go to dashboard
-      if (data.token) {
-        localStorage.setItem('token', data.token)
-        const secure = window.location.protocol === 'https:' ? '; Secure' : ''
-        document.cookie = `token=${data.token}; path=/; max-age=${60 * 60 * 24 * 30}${secure}`
-      }
-      window.location.href = "/dashboard"
+      // Success — go to login page
+      router.push("/login?success=Account created! Please log in.")
 
     } catch (err) {
       setError("Something went wrong. Please try again.")
@@ -105,7 +100,29 @@ export default function SignupPage() {
             <p className="text-gray-500 text-sm mt-1">Join CampusTickets — it's free</p>
           </div>
 
-          {/* Role selector removed - all users default to student */}
+          {/* Role selector */}
+          <div className="flex gap-3 mb-6">
+            <button
+              onClick={() => setRole("student")}
+              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                role === "student"
+                  ? "bg-[#002868] text-white"
+                  : "border border-gray-300 text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              Student
+            </button>
+            <button
+              onClick={() => setRole("organizer")}
+              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                role === "organizer"
+                  ? "bg-[#002868] text-white"
+                  : "border border-gray-300 text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              Organizer
+            </button>
+          </div>
 
           {/* Error message */}
           {error && (

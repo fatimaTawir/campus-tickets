@@ -59,10 +59,9 @@ export async function POST(request: NextRequest) {
       }
     }, { status: 200 })
 
-    const isSecure = process.env.NODE_ENV === 'production' && (process.env.NEXT_PUBLIC_URL?.startsWith('https') ?? false)
     response.cookies.set('token', token, {
       httpOnly: false,
-      secure: isSecure,
+      secure: false,
       sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 30

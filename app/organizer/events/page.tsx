@@ -8,7 +8,9 @@ export const dynamic = 'force-dynamic'
 
 export default async function OrganizerEventsPage() {
   const user = await getCurrentUser()
-  if (!user) redirect('/login?redirect=/organizer/events')
+
+  if (!user) redirect('/login')
+  if (user.role !== 'organizer' && user.role !== 'admin') redirect('/dashboard')
 
   const eventsResult = await pool.query(
     `SELECT e.*, 
