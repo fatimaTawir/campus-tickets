@@ -4,7 +4,7 @@ import Link from 'next/link'
 import pool from '@/app/lib/db'
 import QRTicket from '@/app/components/QRTicket'
 import DownloadTicketButton from '@/app/components/DownloadTicketButton'
-import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut } from 'lucide-react'
+import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut, CreditCard, Smartphone, CheckCircle } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
 export default async function TicketPage({ params }: { params: Promise<{ id: string }> }) {
@@ -48,7 +48,7 @@ export default async function TicketPage({ params }: { params: Promise<{ id: str
         ? 'Payment received successfully'
         : 'Waiting for payment',
       done: ticket.payment_status === 'paid',
-      icon: '💳',
+      icon: <CreditCard className={`w-5 h-5 ${ticket.payment_status === 'paid' ? 'text-green-600' : 'text-gray-400'}`} />,
     },
     {
       label: 'Ticket Ready',
@@ -56,13 +56,13 @@ export default async function TicketPage({ params }: { params: Promise<{ id: str
         ? 'Your QR code is ready to scan'
         : 'QR code will be available after payment',
       done: ticket.payment_status === 'paid',
-      icon: '📱',
+      icon: <Smartphone className={`w-5 h-5 ${ticket.payment_status === 'paid' ? 'text-blue-500' : 'text-gray-400'}`} />,
     },
     {
       label: 'Scanned at Entrance',
       description: 'Show QR code at event entrance',
       done: false,
-      icon: '✅',
+      icon: <CheckCircle className="w-5 h-5 text-gray-400" />,
     },
   ]
 
@@ -158,7 +158,7 @@ export default async function TicketPage({ params }: { params: Promise<{ id: str
       href={`/pay/${ticket.id}`}
       className="bg-green-600 text-white text-center py-3 rounded-xl text-sm font-medium hover:bg-green-700"
     >
-      💳 Pay Now
+      <span className="flex items-center justify-center gap-1"><CreditCard className="w-4 h-4" /> Pay Now</span>
     </Link>
   )}
   <Link

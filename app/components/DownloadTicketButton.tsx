@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { FileText, Mail, Loader2 } from 'lucide-react'
 
 type Props = {
   ticketId: number
@@ -141,9 +142,9 @@ export default function DownloadTicketButton({
         className="w-full bg-[#002868] text-white py-3 rounded-xl text-sm font-medium hover:bg-blue-900 disabled:opacity-50 flex items-center justify-center gap-2"
       >
         {loading ? (
-          <>⏳ Generating PDF...</>
+          <><Loader2 className="w-4 h-4 animate-spin" /> Generating PDF...</>
         ) : (
-          <>📄 Download Ticket (PDF)</>
+          <><FileText className="w-4 h-4" /> Download Ticket (PDF)</>
         )}
       </button>
       
@@ -151,7 +152,7 @@ export default function DownloadTicketButton({
         onClick={handleEmail}
         className="w-full bg-white text-[#002868] border-2 border-[#002868] py-3 rounded-xl text-sm font-medium hover:bg-blue-50 flex items-center justify-center gap-2"
       >
-        📧 Send to Email
+        <Mail className="w-4 h-4" /> Send to Email
       </button>
     </div>
   )

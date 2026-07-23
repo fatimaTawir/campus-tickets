@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter, useParams } from "next/navigation"
 import Link from "next/link"
-import { Home, Calendar, Ticket, LogOut } from 'lucide-react'
+import { Home, Calendar, Ticket, LogOut, Smartphone, CheckCircle2, Lock } from 'lucide-react'
 
 export default function PayPage() {
   const router = useRouter()
@@ -78,6 +78,14 @@ export default function PayPage() {
       setMessage(data.message || "STK push sent! Enter your M-Pesa PIN on the prompt.")
       setStkSent(true)
       setStep(3)
+
+      // Simulate the phone prompt for testing
+      setTimeout(() => {
+        const pin = window.prompt(`[SIMULATION] Safaricom STK Push\n\nDo you want to pay KSH ${amount} to CampusTickets?\n\nEnter your M-Pesa PIN:`)
+        if (pin) {
+          handleManualConfirm()
+        }
+      }, 1500)
 
       // Auto-poll for payment confirmation every 5s for 2 minutes
       let attempts = 0
@@ -202,8 +210,8 @@ export default function PayPage() {
             {/* Event card — shown on all steps */}
             {ticketDetails && (
               <div className="bg-white rounded-2xl border border-gray-200 p-5 flex items-center gap-4">
-                <div className="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center text-3xl flex-shrink-0">
-                  🎟️
+                <div className="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center text-[#002868] flex-shrink-0">
+                  <Ticket className="w-8 h-8" />
                 </div>
                 <div className="flex-1">
                   <p className="font-bold text-gray-800 text-base">{ticketDetails.title}</p>
@@ -265,7 +273,7 @@ export default function PayPage() {
                   {[
                     { id: "mpesa", label: "M-Pesa", sub: "Safaricom STK Push", badge: "MPESA" },
                     { id: "card", label: "Debit / Credit card", sub: "Visa, Mastercard", badge: "VISA" },
-                    { id: "wallet", label: "Campus Wallet", sub: "USIU-A Campus Wallet", badge: "CETS" },
+                    { id: "wallet", label: "Campus Wallet", sub: "USIU-A Campus Wallet", badge: "USIU-A" },
                   ].map((m) => (
                     <button
                       key={m.id}
@@ -321,7 +329,9 @@ export default function PayPage() {
             {/* STEP 3 — Check your phone */}
             {step === 3 && (
               <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center">
-                <div className="text-5xl mb-4">📱</div>
+                <div className="flex justify-center mb-4 text-[#002868]">
+                  <Smartphone className="w-12 h-12" />
+                </div>
                 <h2 className="font-bold text-[#002868] text-xl mb-2">Check your phone!</h2>
                 <p className="text-gray-500 text-sm mb-2">
                   A payment prompt has been sent to <strong>{phone}</strong>.
@@ -341,7 +351,9 @@ export default function PayPage() {
                   disabled={confirming}
                   className="w-full py-4 rounded-xl text-sm font-bold bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 transition-colors"
                 >
-                  {confirming ? "Confirming..." : "✅ I have paid — View my ticket"}
+                  <span className="flex items-center justify-center gap-2">
+                    {confirming ? "Confirming..." : <><CheckCircle2 className="w-5 h-5" /> I have paid — View my ticket</>}
+                  </span>
                 </button>
 
                 <p className="text-xs text-gray-400 mt-4">
@@ -425,7 +437,9 @@ export default function PayPage() {
               >
                 Cancel & Go Back
               </Link>
-              <p className="text-xs text-gray-400 text-center mt-3">🔒 Secured by 256-bit SSL</p>
+              <p className="text-xs text-gray-400 flex items-center justify-center gap-1 mt-3">
+                <Lock className="w-3 h-3" /> Secured by 256-bit SSL
+              </p>
             </div>
           </div>
 

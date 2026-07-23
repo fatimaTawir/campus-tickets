@@ -3,6 +3,7 @@ import pool from "./lib/db";
 import EventCard from "./components/EventCard";
 import SearchBar from "@/app/components/SearchBar";
 import { getCurrentUser } from "@/app/lib/auth";
+import { Calendar, GraduationCap, Search } from 'lucide-react';
 
 export const dynamic = "force-dynamic";
 
@@ -160,8 +161,8 @@ export default async function Home({
             <p className="text-2xl font-black text-[#002868] mb-1">120+</p>
             <p className="text-xs font-medium text-gray-400">Events this semester</p>
           </div>
-          <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-2xl">
-            📅
+          <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-[#002868]">
+            <Calendar className="w-6 h-6" />
           </div>
         </div>
 
@@ -170,8 +171,8 @@ export default async function Home({
             <p className="text-2xl font-black text-[#002868] mb-1">4,800</p>
             <p className="text-xs font-medium text-gray-400">Students registered</p>
           </div>
-          <div className="w-12 h-12 bg-yellow-50 rounded-xl flex items-center justify-center text-2xl">
-            🎓
+          <div className="w-12 h-12 bg-yellow-50 rounded-xl flex items-center justify-center text-[#f0b429]">
+            <GraduationCap className="w-6 h-6" />
           </div>
         </div>
 
@@ -201,7 +202,9 @@ export default async function Home({
 
         {events.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-            <div className="text-5xl mb-4">🔍</div>
+            <div className="flex justify-center mb-4 text-[#002868]">
+              <Search className="w-12 h-12" />
+            </div>
             <p className="text-gray-500 font-semibold text-lg mb-2">No events found</p>
             <p className="text-gray-400 text-sm max-w-xs mx-auto mb-6">We couldn&apos;t find any events matching your search criteria.</p>
             <Link
@@ -235,7 +238,7 @@ export default async function Home({
 
       {/* Footer */}
       <footer className="bg-[#002868] text-blue-200/60 text-center py-8 text-xs border-t border-blue-950 font-medium">
-        © 2026 CETS · Campus Events · Nairobi, Kenya
+        © 2026 USIU-A CampusTickets · Nairobi, Kenya
       </footer>
     </main>
   );

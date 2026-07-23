@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { GraduationCap, Ticket, Smartphone, BarChart3 } from 'lucide-react'
 
 export default function AboutPage() {
   const developers = [
@@ -31,7 +32,9 @@ export default function AboutPage() {
 
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="text-6xl mb-4">🎓</div>
+          <div className="flex justify-center mb-4 text-[#002868]">
+            <GraduationCap className="w-16 h-16" />
+          </div>
           <h1 className="text-4xl font-bold text-gray-800 mb-4">About CampusTickets</h1>
           <p className="text-gray-500 text-lg max-w-2xl mx-auto">
             CampusTickets is a premier event ticketing platform crafted to modernize
@@ -58,17 +61,23 @@ export default function AboutPage() {
         {/* Features */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
           <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
-            <div className="text-4xl mb-3">🎟️</div>
+            <div className="flex justify-center mb-3 text-[#002868]">
+              <Ticket className="w-10 h-10" />
+            </div>
             <h3 className="font-semibold text-gray-800 mb-2">Easy Ticketing</h3>
             <p className="text-gray-500 text-sm">Buy tickets in seconds with M-Pesa integration</p>
           </div>
           <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
-            <div className="text-4xl mb-3">📱</div>
+            <div className="flex justify-center mb-3 text-[#002868]">
+              <Smartphone className="w-10 h-10" />
+            </div>
             <h3 className="font-semibold text-gray-800 mb-2">QR Code Entry</h3>
             <p className="text-gray-500 text-sm">Scan your QR code at the entrance for fast check-in</p>
           </div>
           <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
-            <div className="text-4xl mb-3">📊</div>
+            <div className="flex justify-center mb-3 text-[#002868]">
+              <BarChart3 className="w-10 h-10" />
+            </div>
             <h3 className="font-semibold text-gray-800 mb-2">Live Analytics</h3>
             <p className="text-gray-500 text-sm">Organizers get real-time insights on ticket sales</p>
           </div>

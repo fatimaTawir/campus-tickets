@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useState, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
+import { Ticket } from 'lucide-react'
 
 function LoginForm() {
   const searchParams = useSearchParams()
@@ -139,8 +140,8 @@ export default function LoginPage() {
         <div className="bg-white rounded-2xl border border-gray-200 p-8 w-full max-w-md">
 
           <div className="text-center mb-8">
-            <div className="w-14 h-14 bg-blue-50 border border-blue-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">🎟️</span>
+            <div className="w-16 h-16 bg-[#BF0A30] text-white rounded-2xl flex items-center justify-center mx-auto mb-4 text-sm font-black shadow-md border-2 border-red-800">
+              USIU-A
             </div>
             <p className="text-xs font-bold text-[#BF0A30] uppercase tracking-widest mb-1">USIU-A</p>
             <h2 className="text-2xl font-bold text-gray-800">Welcome back</h2>

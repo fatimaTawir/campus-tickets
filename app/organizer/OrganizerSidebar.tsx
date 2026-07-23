@@ -64,11 +64,10 @@ export default function OrganizerSidebar({ initials, firstName }: OrganizerSideb
       {/* Top Navbar — fixed at top */}
       <header className="fixed top-0 left-0 right-0 z-30 bg-[#002868] text-white px-6 py-3 flex items-center justify-between h-[52px]">
         <div className="flex items-center gap-3">
-          <div className="bg-[#f0b429] rounded p-1.5 flex items-center justify-center">
-            <TicketIcon className="w-5 h-5 text-[#002868]" />
+          <div className="bg-[#BF0A30] text-white text-xs font-bold px-2 py-1 rounded">
+            USIU-A
           </div>
-          <span className="font-bold text-lg tracking-wide">CETS</span>
-          <span className="text-[#f0b429] text-sm font-semibold">· Campus Events</span>
+          <Link href="/organizer" className="text-white text-lg font-bold tracking-wide">CampusTickets</Link>
         </div>
         <div className="flex items-center gap-6">
           <Link href="/" className="text-sm font-medium hover:text-blue-200 transition-colors">Events</Link>
@@ -132,7 +131,7 @@ export default function OrganizerSidebar({ initials, firstName }: OrganizerSideb
               <Rocket className="w-5 h-5 text-[#f0b429]" />
               <p className="text-xs font-bold text-[#002868]">UPGRADE</p>
             </div>
-            <p className="text-[11px] text-gray-500">Get CETS Pro features</p>
+            <p className="text-[11px] text-gray-500">Get USIU-A Pro features</p>
           </Link>
 
           <Link

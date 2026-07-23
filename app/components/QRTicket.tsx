@@ -1,6 +1,7 @@
 "use client"
 
 import { QRCodeSVG } from "qrcode.react"
+import { Calendar, MapPin, GraduationCap, Lock, CheckCircle, Clock } from 'lucide-react'
 
 type QRTicketProps = {
   qrCode: string
@@ -41,9 +42,9 @@ export default function QRTicket({
           {eventTitle}
         </h3>
         <div className="flex flex-col gap-1">
-          <p className="text-sm text-gray-500">📅 {eventDate}</p>
-          <p className="text-sm text-gray-500">📍 {eventVenue}</p>
-          <p className="text-sm text-gray-500">🎓 {studentName}</p>
+          <p className="text-sm text-gray-500 flex items-center gap-1.5"><Calendar className="w-4 h-4" /> {eventDate}</p>
+          <p className="text-sm text-gray-500 flex items-center gap-1.5"><MapPin className="w-4 h-4" /> {eventVenue}</p>
+          <p className="text-sm text-gray-500 flex items-center gap-1.5"><GraduationCap className="w-4 h-4" /> {studentName}</p>
         </div>
       </div>
 
@@ -64,7 +65,9 @@ export default function QRTicket({
           </>
         ) : (
           <div className="text-center py-6">
-            <p className="text-4xl mb-2">🔒</p>
+            <div className="flex justify-center text-gray-400 mb-2">
+              <Lock className="w-10 h-10" />
+            </div>
             <p className="text-sm text-gray-500">
               QR code will appear after payment
             </p>
@@ -78,7 +81,7 @@ export default function QRTicket({
           ? 'bg-green-50 text-green-700'
           : 'bg-yellow-50 text-yellow-700'
       }`}>
-        {paymentStatus === 'paid' ? '✅ Confirmed' : '⏳ Payment Pending'}
+        {paymentStatus === 'paid' ? <span className="flex items-center justify-center gap-1.5"><CheckCircle className="w-4 h-4" /> Confirmed</span> : <span className="flex items-center justify-center gap-1.5"><Clock className="w-4 h-4" /> Payment Pending</span>}
       </div>
 
     </div>

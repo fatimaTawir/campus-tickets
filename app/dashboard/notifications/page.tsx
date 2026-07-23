@@ -2,7 +2,7 @@ import { getCurrentUser } from '@/app/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import pool from '@/app/lib/db'
-import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut, Star, Check, BarChart2 } from 'lucide-react'
+import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut, Star, Check, BarChart2, AlertTriangle } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -141,10 +141,12 @@ export default async function NotificationsPage() {
               {pendingTickets.map((ticket) => (
                 <div key={ticket.id} className="bg-white rounded-2xl border border-yellow-200 p-5 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">⚠️</span>
+                    <div className="flex justify-center text-yellow-500">
+                      <AlertTriangle className="w-6 h-6" />
+                    </div>
                     <div>
                       <p className="font-semibold text-gray-800 text-sm">Payment pending — {ticket.title}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">Complete your payment · 📅 {ticket.date}</p>
+                      <p className="text-xs text-gray-400 mt-0.5 flex items-center gap-1.5">Complete your payment · <Calendar className="w-3.5 h-3.5" /> {ticket.date}</p>
                     </div>
                   </div>
                   <Link href={`/pay/${ticket.id}`} className="bg-[#002868] text-white text-xs px-4 py-2 rounded-lg hover:bg-blue-900">

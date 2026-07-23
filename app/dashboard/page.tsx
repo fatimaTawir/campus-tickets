@@ -198,7 +198,7 @@ export default async function DashboardPage() {
           >
             <div>
               <p className="text-blue-300 text-sm mb-1">{greeting},</p>
-              <h2 className="text-2xl font-bold text-white">{user.firstName} 🎟️</h2>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">{user.firstName} <Ticket className="w-6 h-6" /></h2>
               <p className="text-blue-300 text-sm mt-1">
                 {paidTickets.length === 0
                   ? "You haven't booked any tickets yet. Explore upcoming events!"
@@ -360,7 +360,7 @@ export default async function DashboardPage() {
                             <p className="text-sm font-medium text-gray-800 group-hover:text-[#002868] transition-colors truncate">
                               {event.title}
                             </p>
-                            <p className="text-xs text-gray-400 truncate mt-0.5">📍 {event.venue}</p>
+                            <p className="text-xs text-gray-400 truncate mt-0.5 flex items-center gap-1"><MapPin className="w-3 h-3" /> {event.venue}</p>
                             <p className="text-xs font-semibold text-[#002868] mt-1">
                               KSH {parseFloat(String(event.price_amount)).toLocaleString()}
                             </p>

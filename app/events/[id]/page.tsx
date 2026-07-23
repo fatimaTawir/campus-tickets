@@ -3,6 +3,7 @@ import Link from 'next/link'
 import pool from '@/app/lib/db'
 import { redirect } from 'next/navigation'
 import BookTicketButton from '../../components/BookTicketButton'
+import { Calendar, Clock, MapPin, Tag } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
 const categoryImages: Record<string, string> = {
@@ -52,12 +53,11 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
 
       {/* Navbar */}
       <nav className="bg-[#002868] px-6 py-4 flex items-center justify-between sticky top-0 z-20">
-        <div className="flex items-center gap-2">
-          <div className="bg-[#f0b429] rounded p-1 flex items-center justify-center">
-            <span className="text-[#002868] text-xs font-bold">CT</span>
+        <div className="flex items-center gap-3">
+          <div className="bg-[#BF0A30] text-white text-xs font-bold px-2 py-1 rounded">
+            USIU-A
           </div>
-          <span className="font-bold text-white">CETS</span>
-          <span className="text-[#f0b429] text-sm font-semibold">· Campus Events</span>
+          <Link href="/" className="text-white text-lg font-bold tracking-wide">CampusTickets</Link>
         </div>
         <div className="flex gap-6 items-center">
           <Link href="/" className="text-blue-200 hover:text-white text-sm font-medium">Events</Link>
@@ -112,19 +112,19 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Date</p>
-                  <p className="text-gray-800 font-medium">📅 {event.date}</p>
+                  <p className="text-gray-800 font-medium flex items-center gap-1.5"><Calendar className="w-4 h-4 text-gray-500" /> {event.date}</p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Time</p>
-                  <p className="text-gray-800 font-medium">🕐 {event.time}</p>
+                  <p className="text-gray-800 font-medium flex items-center gap-1.5"><Clock className="w-4 h-4 text-gray-500" /> {event.time}</p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Venue</p>
-                  <p className="text-gray-800 font-medium">📍 {event.venue}</p>
+                  <p className="text-gray-800 font-medium flex items-center gap-1.5"><MapPin className="w-4 h-4 text-gray-500" /> {event.venue}</p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Category</p>
-                  <p className="text-gray-800 font-medium">🏷️ {event.category}</p>
+                  <p className="text-gray-800 font-medium flex items-center gap-1.5"><Tag className="w-4 h-4 text-gray-500" /> {event.category}</p>
                 </div>
               </div>
 
@@ -163,13 +163,9 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
 
               <div className="flex flex-col gap-2 mb-4">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">📅 {event.date}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">🕐 {event.time}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">📍 {event.venue}</span>
+                  <span className="text-gray-500 flex items-center gap-1.5"><Calendar className="w-4 h-4" /> {event.date}</span>
+                  <span className="text-gray-500 flex items-center gap-1.5"><Clock className="w-4 h-4" /> {event.time}</span>
+                  <span className="text-gray-500 flex items-center gap-1.5"><MapPin className="w-4 h-4" /> {event.venue}</span>
                 </div>
               </div>
 

@@ -2,7 +2,7 @@ import { getCurrentUser } from '@/app/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import pool from '@/app/lib/db'
-import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut, Star, Check, BarChart2 } from 'lucide-react'
+import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut, Star, Check, BarChart2, MapPin, Clock, CheckCircle } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -146,7 +146,7 @@ export default async function MyTicketsPage() {
                 <div key={ticket.id} className="bg-white rounded-2xl border border-gray-200 p-5 flex items-center justify-between">
                   <div>
                     <p className="font-semibold text-gray-800">{ticket.title}</p>
-                    <p className="text-sm text-gray-400 mt-1">📍 {ticket.venue} · 📅 {ticket.date} · 🕐 {ticket.time}</p>
+                    <p className="text-sm text-gray-400 mt-1 flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {ticket.venue} · <Calendar className="w-3.5 h-3.5" /> {ticket.date} · <Clock className="w-3.5 h-3.5" /> {ticket.time}</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className={`text-xs px-3 py-1 rounded-full font-medium ${
@@ -154,7 +154,7 @@ export default async function MyTicketsPage() {
                         ? 'bg-green-100 text-green-700'
                         : 'bg-yellow-100 text-yellow-700'
                     }`}>
-                      {ticket.payment_status === 'paid' ? '✅ Paid' : '⏳ Pending'}
+                      {ticket.payment_status === 'paid' ? <span className="flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5" /> Paid</span> : <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> Pending</span>}
                     </span>
                     {ticket.payment_status === 'pending' && (
                       <Link href={`/pay/${ticket.id}`} className="bg-[#002868] text-white text-xs px-3 py-1.5 rounded-lg hover:bg-blue-900">

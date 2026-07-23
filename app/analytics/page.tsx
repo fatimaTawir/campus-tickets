@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import pool from '@/app/lib/db'
 import AnalyticsCharts from '@/app/components/AnalyticsCharts'
+import { BarChart3, Trophy } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
 export default async function AnalyticsPage() {
@@ -66,10 +67,12 @@ export default async function AnalyticsPage() {
             <p className="text-[#f0b429] text-sm font-semibold uppercase tracking-widest mb-1">
               Analytics
             </p>
-            <h2 className="text-2xl font-bold text-white">Campus Events Overview</h2>
+            <h2 className="text-2xl font-bold text-white">CampusTickets Overview</h2>
             <p className="text-blue-200 text-sm mt-1">USIU-Africa · 2026</p>
           </div>
-          <div className="text-6xl">📊</div>
+          <div className="flex justify-center text-[#002868]">
+            <BarChart3 className="w-16 h-16" />
+          </div>
         </div>
 
         {/* Stats cards */}
@@ -97,8 +100,8 @@ export default async function AnalyticsPage() {
         {/* Most popular event */}
         {mostPopular && (
           <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-8">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">
-              🏆 Most Popular Event
+            <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-yellow-500" /> Most Popular Event
             </h3>
             <div className="flex items-center justify-between">
               <div>

@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import pool from '@/app/lib/db'
 import DownloadTicketButton from '@/app/components/DownloadTicketButton'
-import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut, Star, Check } from 'lucide-react'
+import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut, Star, Check, MapPin, GraduationCap } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,7 +27,7 @@ export default async function BookingConfirmedPage({ params }: { params: Promise
   if (result.rows.length === 0) redirect('/dashboard')
 
   const ticket = result.rows[0]
-  const bookingRef = `CETS-${ticket.qr_code.replace('USIU-', '').substring(0, 6).toUpperCase()}`
+  const bookingRef = `USIU-A-${ticket.qr_code.replace('USIU-', '').substring(0, 6).toUpperCase()}`
   const initials = `${user.firstName?.[0] ?? ''}`.toUpperCase()
   const quantity = ticket.quantity ?? 1
 
@@ -154,15 +154,15 @@ export default async function BookingConfirmedPage({ params }: { params: Promise
                 <div>
                   <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Ticket details</p>
                   <p className="font-semibold text-gray-800 mb-2">{ticket.title}</p>
-                  <p className="text-sm text-gray-500 mb-1">📅 {ticket.date} · {ticket.time}</p>
-                  <p className="text-sm text-gray-500 mb-1">📍 {ticket.venue}</p>
-                  <p className="text-sm text-gray-500">🎓 {ticket.first_name} {ticket.last_name}</p>
+                  <p className="text-sm text-gray-500 mb-1 flex items-center gap-1"><Calendar className="w-4 h-4" /> {ticket.date} · {ticket.time}</p>
+                  <p className="text-sm text-gray-500 mb-1 flex items-center gap-1"><MapPin className="w-4 h-4" /> {ticket.venue}</p>
+                  <p className="text-sm text-gray-500 flex items-center gap-1"><GraduationCap className="w-4 h-4" /> {ticket.first_name} {ticket.last_name}</p>
 
                   {/* Quantity display */}
                   <div className="mt-4">
                     <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Quantity</p>
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl">🎟️</span>
+                      <Ticket className="w-6 h-6 text-gray-700" />
                       <p className="font-bold text-gray-800">{quantity} Ticket{quantity > 1 ? 's' : ''}</p>
                     </div>
                   </div>
