@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function OrganizerUpgradePage() {
   const user = await getCurrentUser()
-  if (!user) return null
+  if (!user) return null // layout already redirects
 
   return (
     <div className="p-8 max-w-4xl mx-auto">

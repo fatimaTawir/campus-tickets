@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
       `INSERT INTO users (first_name, last_name, email, student_id, password_hash, role)
        VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING id, first_name, last_name, email, role`,
-      [firstName, lastName, email, studentId || null, passwordHash, 'student']
+      [firstName, lastName, email, studentId || null, passwordHash, role || 'student']
     )
 
     const newUser = result.rows[0]
@@ -55,9 +55,10 @@ export async function POST(request: NextRequest) {
       user: newUser
     }, { status: 201 })
 
+    const isProduction = process.env.NODE_ENV === 'production'
     response.cookies.set('token', token, {
       httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isProduction,
       sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 30

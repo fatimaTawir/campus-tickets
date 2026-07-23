@@ -64,8 +64,13 @@ export default function SignupPage() {
         return
       }
 
-      // Success — go to login page
-      router.push("/login?success=Account created! Please log in.")
+      // Success — auto-login and go to dashboard
+      if (data.token) {
+        localStorage.setItem('token', data.token)
+        const secure = window.location.protocol === 'https:' ? '; Secure' : ''
+        document.cookie = `token=${data.token}; path=/; max-age=${60 * 60 * 24 * 30}${secure}`
+      }
+      window.location.href = "/dashboard"
 
     } catch (err) {
       setError("Something went wrong. Please try again.")

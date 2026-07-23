@@ -6,14 +6,14 @@ export const dynamic = 'force-dynamic'
 
 export default async function OrganizerAuditLogsPage() {
   const user = await getCurrentUser()
-  if (!user) return null
+  if (!user) return null // layout already redirects
 
   // Mock data for audit logs since we don't have a table yet
   const logs = [
-    { id: 1, action: 'User Login', user: user.firstName, date: '2026-07-23T10:00:00Z', status: 'Success' },
-    { id: 2, action: 'Event Created', user: user.firstName, date: '2026-07-22T14:30:00Z', status: 'Success' },
-    { id: 3, action: 'Profile Updated', user: user.firstName, date: '2026-07-21T09:15:00Z', status: 'Success' },
-    { id: 4, action: 'Ticket Scan', user: 'Scanner Terminal 1', date: '2026-07-20T16:45:00Z', status: 'Success' },
+    { id: 1, action: 'User Login', user: user.firstName, date: new Date().toISOString(), status: 'Success' },
+    { id: 2, action: 'Event Created', user: user.firstName, date: new Date(Date.now() - 86400000).toISOString(), status: 'Success' },
+    { id: 3, action: 'Profile Updated', user: user.firstName, date: new Date(Date.now() - 172800000).toISOString(), status: 'Success' },
+    { id: 4, action: 'Ticket Scan', user: 'Scanner Terminal 1', date: new Date(Date.now() - 259200000).toISOString(), status: 'Success' },
   ]
 
   return (

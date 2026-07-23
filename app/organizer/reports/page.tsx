@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function OrganizerReportsPage() {
   const user = await getCurrentUser()
-  if (!user) return null
+  if (!user) return null // layout already redirects
 
   const eventsResult = await pool.query(`
     SELECT 
@@ -22,20 +22,28 @@ export default async function OrganizerReportsPage() {
     WHERE e.organizer_id = $1
     GROUP BY e.id, e.title, e.category, e.capacity, e.tickets_sold, e.price_amount
     ORDER BY total_tickets DESC
-  `, [user.userId]).catch(() => ({ rows: [] }))
+  `, [user.userId])
 
-  const events = eventsResult.rows as any[]
+  const events = eventsResult.rows
 
-  const totalTickets = events.reduce((sum: number, e: any) => sum + parseInt(e.total_tickets || 0), 0)
+  const totalTickets = events.reduce((sum: number, e: any) => sum + parseInt(e.total_tickets), 0)
   const totalRevenue = events.reduce((sum: number, e: any) => sum + parseFloat(e.revenue || 0), 0)
-  const totalCapacity = events.reduce((sum: number, e: any) => sum + parseInt(e.capacity || 0), 0)
+  const totalCapacity = events.reduce((sum: number, e: any) => sum + parseInt(e.capacity), 0)
   const mostPopular = events[0]
 
   return (
     <div className="p-8 max-w-6xl mx-auto">
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-1">Reports &amp; Analytics</h2>
-        <p className="text-sm text-gray-500">Track performance across all your events.</p>
+
+      {/* Header */}
+      <div className="bg-[#002868] rounded-2xl p-6 mb-8 flex items-center justify-between">
+        <div>
+          <p className="text-[#f0b429] text-sm font-semibold uppercase tracking-widest mb-1">
+            Analytics
+          </p>
+          <h2 className="text-2xl font-bold text-white">Reports &amp; Analytics</h2>
+          <p className="text-blue-200 text-sm mt-1">Track your event performance</p>
+        </div>
+        <div className="text-6xl">📊</div>
       </div>
 
       {/* Stats cards */}
@@ -101,29 +109,24 @@ export default async function OrganizerReportsPage() {
               </tr>
             </thead>
             <tbody>
-              {events.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="py-8 text-center text-gray-400">No events yet. Create your first event to see reports.</td>
+              {events.map((event: any, index: number) => (
+                <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+                  <td className="py-3 px-4 font-medium text-gray-800">{event.title}</td>
+                  <td className="py-3 px-4 text-gray-500">{event.category}</td>
+                  <td className="py-3 px-4 text-center text-[#002868] font-bold">
+                    {event.total_tickets}
+                  </td>
+                  <td className="py-3 px-4 text-center text-gray-500">{event.capacity}</td>
+                  <td className="py-3 px-4 text-right text-green-600 font-bold">
+                    KES {parseFloat(event.revenue || 0).toLocaleString()}
+                  </td>
                 </tr>
-              ) : (
-                events.map((event: any, index: number) => (
-                  <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 px-4 font-medium text-gray-800">{event.title}</td>
-                    <td className="py-3 px-4 text-gray-500">{event.category}</td>
-                    <td className="py-3 px-4 text-center text-[#002868] font-bold">
-                      {event.total_tickets}
-                    </td>
-                    <td className="py-3 px-4 text-center text-gray-500">{event.capacity}</td>
-                    <td className="py-3 px-4 text-right text-green-600 font-bold">
-                      KES {parseFloat(event.revenue || 0).toLocaleString()}
-                    </td>
-                  </tr>
-                ))
-              )}
+              ))}
             </tbody>
           </table>
         </div>
       </div>
+
     </div>
   )
 }

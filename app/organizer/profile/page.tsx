@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function OrganizerProfilePage() {
   const user = await getCurrentUser()
-  if (!user) return null
+  if (!user) return null // layout already redirects
 
   const initials = `${user.firstName?.[0] ?? ''}`.toUpperCase()
 

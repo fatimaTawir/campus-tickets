@@ -15,7 +15,7 @@ export default async function EventDashboardPage({
   params: Promise<{ id: string }>
 }) {
   const user = await getCurrentUser()
-  if (!user) return null
+  if (!user) return null // layout already redirects
 
   const { id } = await params
 
