@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function OrganizerReportsPage() {
   const user = await getCurrentUser()
-  if (!user) return null // layout already redirects
+  if (!user) redirect('/login?redirect=/organizer/reports')
 
   const eventsResult = await pool.query(`
     SELECT 

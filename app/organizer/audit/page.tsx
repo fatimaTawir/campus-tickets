@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function OrganizerAuditLogsPage() {
   const user = await getCurrentUser()
-  if (!user) return null // layout already redirects
+  if (!user) redirect('/login?redirect=/organizer/audit')
 
   // Mock data for audit logs since we don't have a table yet
   const logs = [
