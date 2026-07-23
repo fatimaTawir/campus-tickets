@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function OrganizerHelpPage() {
   const user = await getCurrentUser()
-  if (!user) redirect('/login?redirect=/organizer/help')
+  if (!user) return null
 
   return (
     <div className="p-8 max-w-5xl mx-auto">

@@ -100,29 +100,7 @@ export default function SignupPage() {
             <p className="text-gray-500 text-sm mt-1">Join CampusTickets — it's free</p>
           </div>
 
-          {/* Role selector */}
-          <div className="flex gap-3 mb-6">
-            <button
-              onClick={() => setRole("student")}
-              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
-                role === "student"
-                  ? "bg-[#002868] text-white"
-                  : "border border-gray-300 text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              Student
-            </button>
-            <button
-              onClick={() => setRole("organizer")}
-              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
-                role === "organizer"
-                  ? "bg-[#002868] text-white"
-                  : "border border-gray-300 text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              Organizer
-            </button>
-          </div>
+          {/* Role selector removed - all users default to student */}
 
           {/* Error message */}
           {error && (
