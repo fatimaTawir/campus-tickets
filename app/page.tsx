@@ -3,7 +3,6 @@ import pool from "./lib/db";
 import EventCard from "./components/EventCard";
 import SearchBar from "@/app/components/SearchBar";
 import { getCurrentUser } from "@/app/lib/auth";
-import { Bell } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -64,18 +63,16 @@ export default async function Home({
     "Music",
   ];
 
-  const initials = user ? `${user.firstName?.[0] ?? ''}`.toUpperCase() : "";
 
   return (
     <main className="min-h-screen bg-gray-50 flex flex-col font-sans">
       {/* Top Navbar */}
       <nav className="bg-[#002868] px-8 py-4 flex items-center justify-between border-b border-blue-900 sticky top-0 z-20">
         <div className="flex items-center gap-3">
-          <div className="bg-[#f0b429] rounded p-1.5 flex items-center justify-center">
-            <TicketIcon className="w-5 h-5 text-[#002868]" />
+          <div className="bg-[#BF0A30] text-white text-xs font-bold px-2 py-1 rounded">
+            USIU-A
           </div>
-          <span className="font-bold text-lg text-white tracking-wide">CETS</span>
-          <span className="text-[#f0b429] text-sm font-semibold">· Campus Events</span>
+          <Link href="/" className="text-white text-lg font-bold tracking-wide">CampusTickets</Link>
         </div>
 
         <div className="flex gap-6 items-center">
@@ -91,28 +88,26 @@ export default async function Home({
 
           {user ? (
             <>
-              {/* Notification Bell */}
-              <Link href="/dashboard/notifications" className="relative p-1 text-blue-100 hover:text-white transition-colors">
-                <Bell className="w-5 h-5" />
+              <Link href="/login" className="text-blue-100 hover:text-white text-sm font-medium transition-colors">
+                Log in
               </Link>
-              {/* User profile dropdown action */}
-              <Link href="/dashboard" className="flex items-center gap-2 bg-[#001f52] px-3.5 py-1.5 rounded-full cursor-pointer hover:bg-[#001840] transition-colors border border-blue-800">
-                <div className="w-6 h-6 bg-[#f0b429] rounded-full flex items-center justify-center text-[#002868] text-xs font-bold">
-                  {initials}
-                </div>
-                <span className="text-sm text-white font-medium">{user.firstName}</span>
+              <Link
+                href="/signup"
+                className="bg-[#BF0A30] text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-red-700 transition-all shadow-md"
+              >
+                Sign up
               </Link>
             </>
           ) : (
             <>
               <Link href="/login" className="text-blue-100 hover:text-white text-sm font-medium transition-colors">
-                Sign in
+                Log in
               </Link>
               <Link
                 href="/signup"
-                className="bg-[#f0b429] text-[#002868] px-5 py-2 rounded-xl text-sm font-bold hover:bg-yellow-400 transition-all shadow-md"
+                className="bg-[#BF0A30] text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-red-700 transition-all shadow-md"
               >
-                Register
+                Sign up
               </Link>
             </>
           )}
@@ -243,24 +238,5 @@ export default async function Home({
         © 2026 CETS · Campus Events · Nairobi, Kenya
       </footer>
     </main>
-  );
-}
-
-function TicketIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="2" y="7" width="20" height="10" rx="2" ry="2" />
-      <path d="M7 7v10" />
-      <path d="M17 7v10" />
-      <path d="M2 12h20" />
-    </svg>
   );
 }

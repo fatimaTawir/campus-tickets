@@ -93,11 +93,12 @@ export default function SignupPage() {
 
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="bg-[#BF0A30] text-white text-sm font-bold px-3 py-1 rounded inline-block mb-4">
-              USIU-A
+            <div className="w-14 h-14 bg-blue-50 border border-blue-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">🎟️</span>
             </div>
+            <p className="text-xs font-bold text-[#BF0A30] uppercase tracking-widest mb-1">USIU-A</p>
             <h2 className="text-2xl font-bold text-gray-800">Create your account</h2>
-            <p className="text-gray-500 text-sm mt-1">Join CampusTickets — it's free</p>
+            <p className="text-gray-500 text-sm mt-1">Join CampusTickets — some are free.</p>
           </div>
 
           {/* Role selector */}
