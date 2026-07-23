@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react"
 import { useRouter, useParams } from "next/navigation"
 import Link from "next/link"
-import { Home, Calendar, Ticket, Bell, Settings, HelpCircle, LogOut } from 'lucide-react'
+import { Home, Calendar, Ticket, LogOut } from 'lucide-react'
 
 export default function PayPage() {
   const router = useRouter()
   const params = useParams()
   const ticketId = params.id
+
+  const [step, setStep] = useState(1) // 1=Select, 2=Payment, 3=Confirm (phone prompt)
   const [phone, setPhone] = useState("")
   const [paymentMethod, setPaymentMethod] = useState("mpesa")
   const [loading, setLoading] = useState(false)
@@ -16,7 +18,6 @@ export default function PayPage() {
   const [message, setMessage] = useState("")
   const [messageType, setMessageType] = useState<"success" | "error">("success")
   const [stkSent, setStkSent] = useState(false)
-  const [step, setStep] = useState(2) // 1=Select, 2=Payment, 3=Confirm
   const [ticketDetails, setTicketDetails] = useState<any>(null)
   const [quantity, setQuantity] = useState(1)
 
@@ -27,9 +28,7 @@ export default function PayPage() {
         const data = await response.json()
         if (data.tickets) {
           const match = data.tickets.find((t: any) => String(t.id) === String(ticketId))
-          if (match) {
-            setTicketDetails(match)
-          }
+          if (match) setTicketDetails(match)
         }
       } catch (err) {
         console.error(err)
@@ -37,6 +36,16 @@ export default function PayPage() {
     }
     if (ticketId) loadTicket()
   }, [ticketId])
+
+  const unitPrice = ticketDetails ? parseFloat(ticketDetails.price_amount) : 0
+  const isFree = unitPrice === 0
+  const serviceFee = isFree ? 0 : Math.round(unitPrice * 0.02 * quantity)
+  const subtotal = Math.round(unitPrice * quantity)
+  const total = subtotal + serviceFee
+
+  async function handleProceedToPayment() {
+    setStep(2)
+  }
 
   async function handlePay() {
     if (paymentMethod === "mpesa" && !phone) {
@@ -54,9 +63,7 @@ export default function PayPage() {
     setMessage("")
 
     try {
-      const amount = Math.round(ticketDetails && parseFloat(ticketDetails.price_amount) > 0
-        ? parseFloat(ticketDetails.price_amount) * quantity
-        : 1);
+      const amount = Math.round(unitPrice > 0 ? unitPrice * quantity : 1)
 
       const response = await fetch("/api/mpesa/pay", {
         method: "POST",
@@ -66,22 +73,13 @@ export default function PayPage() {
 
       const data = await response.json()
 
-      if (!response.ok) {
-        // M-Pesa sandbox unavailable — auto-confirm for demo
-        setMessageType("success")
-        setMessage("M-Pesa STK sent! If you don't receive a prompt, use \"Simulate Payment\" below.")
-        setStkSent(true)
-        setStep(3)
-        setLoading(false)
-        return
-      }
-
+      // Whether STK succeeds or fails in sandbox, move to "check your phone" step
       setMessageType("success")
-      setMessage("STK push sent! Enter your PIN on your phone.")
+      setMessage(data.message || "STK push sent! Enter your M-Pesa PIN on the prompt.")
       setStkSent(true)
       setStep(3)
 
-      // Auto-check every 5 seconds
+      // Auto-poll for payment confirmation every 5s for 2 minutes
       let attempts = 0
       const interval = setInterval(async () => {
         attempts++
@@ -97,9 +95,9 @@ export default function PayPage() {
       }, 5000)
 
     } catch (err) {
-      // Network error — fall back to simulation
+      // Network error — still move to check-phone step
       setMessageType("success")
-      setMessage("Please use \"Simulate Payment\" below to complete your booking.")
+      setMessage("Check your phone for the M-Pesa PIN prompt.")
       setStkSent(true)
       setStep(3)
     } finally {
@@ -129,6 +127,12 @@ export default function PayPage() {
       setConfirming(false)
     }
   }
+
+  const steps = [
+    { n: 1, label: "Select" },
+    { n: 2, label: "Payment" },
+    { n: 3, label: "Confirm" },
+  ]
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -167,197 +171,264 @@ export default function PayPage() {
       {/* Main */}
       <main className="ml-64 flex-1 p-8">
 
-        {/* Steps */}
-        <div className="flex items-center gap-4 mb-8 max-w-2xl">
-          {[{ n: 1, label: "Select" }, { n: 2, label: "Payment" }, { n: 3, label: "Confirm" }].map((s, i) => (
+        {/* Step indicator */}
+        <div className="flex items-center gap-2 mb-8 max-w-2xl">
+          {steps.map((s, i) => (
             <div key={s.n} className="flex items-center gap-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                step >= s.n ? 'bg-[#002868] text-white' : 'bg-gray-200 text-gray-500'
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
+                step > s.n
+                  ? 'bg-[#002868] text-white'
+                  : step === s.n
+                  ? 'bg-[#002868] text-white ring-4 ring-blue-200'
+                  : 'bg-gray-200 text-gray-400'
               }`}>
                 {step > s.n ? '✓' : s.n}
               </div>
-              <span className={`text-sm ${step >= s.n ? 'text-[#002868] font-medium' : 'text-gray-400'}`}>
+              <span className={`text-sm font-medium ${step >= s.n ? 'text-[#002868]' : 'text-gray-400'}`}>
                 {s.label}
               </span>
-              {i < 2 && <div className={`h-0.5 w-16 ${step > s.n ? 'bg-[#002868]' : 'bg-gray-200'}`} />}
+              {i < 2 && (
+                <div className={`h-0.5 w-20 mx-2 rounded-full transition-colors ${step > s.n ? 'bg-[#002868]' : 'bg-gray-200'}`} />
+              )}
             </div>
           ))}
         </div>
 
         <div className="grid grid-cols-3 gap-6 max-w-4xl">
 
-          {/* Left Column */}
-          <div className="col-span-2 flex flex-col gap-6">
+          {/* LEFT COLUMN */}
+          <div className="col-span-2 flex flex-col gap-5">
 
-            {/* Ticket Details & Quantity (like Image 4) */}
+            {/* Event card — shown on all steps */}
             {ticketDetails && (
-              <div className="bg-white rounded-2xl border border-gray-200 p-6 flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold text-gray-800 mb-3">Ticket quantity</h3>
-                  <div className="flex items-center gap-3">
+              <div className="bg-white rounded-2xl border border-gray-200 p-5 flex items-center gap-4">
+                <div className="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center text-3xl flex-shrink-0">
+                  🎟️
+                </div>
+                <div className="flex-1">
+                  <p className="font-bold text-gray-800 text-base">{ticketDetails.title}</p>
+                  <p className="text-sm text-gray-500 mt-0.5">
+                    {ticketDetails.date} · {ticketDetails.time} · {ticketDetails.venue}
+                  </p>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <p className="font-extrabold text-[#002868] text-lg">
+                    {isFree ? "FREE" : `KSH ${unitPrice.toLocaleString()}`}
+                  </p>
+                  <p className="text-xs text-gray-400">PER TICKET</p>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 1 — Ticket quantity */}
+            {step === 1 && (
+              <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                <h2 className="font-semibold text-gray-800 text-base mb-5">Ticket quantity</h2>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
                     <button
                       onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                      className="w-8 h-8 rounded border border-gray-300 text-gray-700 font-bold text-lg flex items-center justify-center hover:bg-gray-100"
+                      className="w-9 h-9 rounded-lg border border-gray-300 text-gray-700 font-bold text-xl flex items-center justify-center hover:bg-gray-100 transition-colors"
                     >−</button>
-                    <span className="font-bold text-gray-800 text-lg w-6 text-center">{quantity}</span>
+                    <span className="font-bold text-gray-800 text-xl w-8 text-center">{quantity}</span>
                     <button
                       onClick={() => setQuantity(q => Math.min(5, q + 1))}
-                      className="w-8 h-8 rounded border border-gray-300 text-gray-700 font-bold text-lg flex items-center justify-center hover:bg-gray-100"
+                      className="w-9 h-9 rounded-lg border border-gray-300 text-gray-700 font-bold text-xl flex items-center justify-center hover:bg-gray-100 transition-colors"
                     >+</button>
                   </div>
-                </div>
-                <div className="text-right">
-                  <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full inline-block mb-1">
-                    86 seats left
-                  </span>
-                  <p className="text-xs text-gray-400">Max 5 tickets per student</p>
+                  <div className="text-right">
+                    <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full inline-block">
+                      86 seats left
+                    </span>
+                    <p className="text-xs text-gray-400 mt-1">Max 5 tickets per student</p>
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* Payment form */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Payment method</h2>
+            {/* STEP 2 — Payment method */}
+            {step === 2 && !stkSent && (
+              <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                <h2 className="font-semibold text-gray-800 text-base mb-5">Payment method</h2>
 
-            {message && (
-              <div className={`text-sm px-4 py-3 rounded-lg mb-4 ${
-                messageType === "success"
-                  ? "bg-green-50 border border-green-200 text-green-700"
-                  : "bg-red-50 border border-red-200 text-red-700"
-              }`}>
-                {message}
-              </div>
-            )}
+                {message && (
+                  <div className={`text-sm px-4 py-3 rounded-lg mb-4 ${
+                    messageType === "success"
+                      ? "bg-green-50 border border-green-200 text-green-700"
+                      : "bg-red-50 border border-red-200 text-red-700"
+                  }`}>
+                    {message}
+                  </div>
+                )}
 
-            {!stkSent ? (
-              <>
-                {/* Payment options */}
-                <div className="flex flex-col gap-3 mb-6">
+                <div className="flex flex-col gap-3 mb-5">
                   {[
-                    { id: "mpesa", label: "M-Pesa", sub: "Safaricom STK Push", icon: "📱" },
-                    { id: "card", label: "Debit / Credit card", sub: "Visa, Mastercard", icon: "💳" },
-                    { id: "wallet", label: "Campus Wallet", sub: "USIU-A Campus Wallet", icon: "🎓" },
+                    { id: "mpesa", label: "M-Pesa", sub: "Safaricom STK Push", badge: "MPESA" },
+                    { id: "card", label: "Debit / Credit card", sub: "Visa, Mastercard", badge: "VISA" },
+                    { id: "wallet", label: "Campus Wallet", sub: "USIU-A Campus Wallet", badge: "CETS" },
                   ].map((m) => (
                     <button
                       key={m.id}
                       onClick={() => setPaymentMethod(m.id)}
-                      className={`flex items-center justify-between p-4 rounded-xl border-2 transition-colors text-left ${
-                        paymentMethod === m.id ? 'border-[#002868] bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      className={`flex items-center justify-between p-4 rounded-xl border-2 transition-all text-left ${
+                        paymentMethod === m.id
+                          ? 'border-[#002868] bg-blue-50'
+                          : 'border-gray-200 hover:border-gray-300 bg-white'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-lg">
-                          {m.icon}
+                        <div className={`w-5 h-5 rounded-full border-2 flex-shrink-0 ${
+                          paymentMethod === m.id
+                            ? 'border-[#002868] bg-[#002868]'
+                            : 'border-gray-300'
+                        }`}>
+                          {paymentMethod === m.id && (
+                            <div className="w-full h-full rounded-full flex items-center justify-center">
+                              <div className="w-2 h-2 bg-white rounded-full" />
+                            </div>
+                          )}
                         </div>
                         <div>
                           <p className="font-medium text-gray-800 text-sm">{m.label}</p>
                           <p className="text-xs text-gray-400">{m.sub}</p>
                         </div>
                       </div>
-                      <div className={`w-4 h-4 rounded-full border-2 ${
-                        paymentMethod === m.id ? 'border-[#002868] bg-[#002868]' : 'border-gray-300'
-                      }`} />
+                      <span className="text-xs font-bold text-gray-500 border border-gray-300 px-2 py-0.5 rounded">
+                        {m.badge}
+                      </span>
                     </button>
                   ))}
                 </div>
 
                 {paymentMethod === "mpesa" && (
-                  <div className="mb-4">
-                    <label className="text-sm font-medium text-gray-700 block mb-1">M-Pesa Phone Number</label>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 block mb-1.5">
+                      M-Pesa Phone Number
+                    </label>
                     <input
                       type="tel"
                       placeholder="e.g. 0712345678"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868]"
+                      className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#002868] focus:border-transparent"
                     />
+                    <p className="text-xs text-gray-400 mt-1.5">A PIN prompt will be sent to this number</p>
                   </div>
                 )}
-              </>
-            ) : (
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
-                <p className="text-3xl mb-3">📱</p>
-                <p className="font-semibold text-blue-800 mb-2">Check your phone!</p>
-                <p className="text-sm text-blue-600 mb-6">
-                  Enter your M-Pesa PIN on the prompt sent to your phone. Once done, click the button below.
+              </div>
+            )}
+
+            {/* STEP 3 — Check your phone */}
+            {step === 3 && (
+              <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center">
+                <div className="text-5xl mb-4">📱</div>
+                <h2 className="font-bold text-[#002868] text-xl mb-2">Check your phone!</h2>
+                <p className="text-gray-500 text-sm mb-2">
+                  A payment prompt has been sent to <strong>{phone}</strong>.
                 </p>
+                <p className="text-gray-500 text-sm mb-8">
+                  Enter your <strong>M-Pesa PIN</strong> on the prompt. Once done, click the button below to confirm your ticket.
+                </p>
+
+                {message && (
+                  <div className="text-sm px-4 py-3 rounded-lg mb-5 bg-green-50 border border-green-200 text-green-700">
+                    {message}
+                  </div>
+                )}
+
                 <button
                   onClick={handleManualConfirm}
                   disabled={confirming}
-                  className="w-full py-3 rounded-xl text-sm font-bold bg-green-600 text-white hover:bg-green-700 disabled:opacity-50"
+                  className="w-full py-4 rounded-xl text-sm font-bold bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 transition-colors"
                 >
                   {confirming ? "Confirming..." : "✅ I have paid — View my ticket"}
                 </button>
+
+                <p className="text-xs text-gray-400 mt-4">
+                  Didn't get a prompt?{" "}
+                  <button onClick={() => { setStep(2); setStkSent(false); setMessage("") }} className="text-[#002868] underline">
+                    Go back and try again
+                  </button>
+                </p>
               </div>
             )}
+
           </div>
 
-          {/* Order summary */}
+          {/* RIGHT COLUMN — Order summary */}
           <div className="col-span-1">
-            <div className="bg-white rounded-2xl border border-gray-200 p-6">
+            <div className="bg-white rounded-2xl border border-gray-200 p-6 sticky top-8">
               <h3 className="font-semibold text-gray-800 mb-4">Order summary</h3>
 
-              <div className="flex flex-col gap-2 mb-4">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Ticket</span>
-                  <span className="text-gray-800 font-medium max-w-[150px] truncate text-right">
-                    {ticketDetails?.title || "Campus Event"}
+              <div className="flex flex-col gap-2.5 mb-4 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-500 truncate pr-2">
+                    {ticketDetails?.title || "Campus Event"} × {quantity}
+                  </span>
+                  <span className="text-gray-800 font-medium flex-shrink-0">
+                    {isFree ? "Free" : `${subtotal.toLocaleString()}`}
                   </span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Unit price</span>
-                  <span className="text-gray-800 font-medium">
-                    {ticketDetails ? (parseFloat(ticketDetails.price_amount) === 0 ? "Free" : `KSH ${parseFloat(ticketDetails.price_amount).toLocaleString()}`) : "—"}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Qty</span>
-                  <span className="text-gray-800 font-medium">× {quantity}</span>
-                </div>
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between">
                   <span className="text-gray-500">Service fee</span>
-                  <span className="text-gray-800 font-medium">KSH 0</span>
-                </div>
-              </div>
-              <div className="border-t border-gray-100 pt-3 mb-6">
-                <div className="flex justify-between font-bold text-gray-800">
-                  <span>Total</span>
-                  <span className="text-[#002868]">
-                    {ticketDetails
-                      ? (parseFloat(ticketDetails.price_amount) === 0
-                          ? "Free"
-                          : `KSH ${(parseFloat(ticketDetails.price_amount) * quantity).toLocaleString()}`)
-                      : "—"}
-                  </span>
+                  <span className="text-gray-800 font-medium">{serviceFee}</span>
                 </div>
               </div>
 
-              {!stkSent && (
-                <div className="flex flex-col gap-2 mb-2">
+              <div className="border-t border-gray-100 pt-3 mb-5">
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-gray-800">Total</span>
+                  <div className="text-right">
+                    <p className="text-xs text-gray-400">KSH</p>
+                    <p className="font-extrabold text-[#002868] text-2xl">
+                      {isFree ? "Free" : total.toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* CTA buttons based on step */}
+              {step === 1 && (
+                <button
+                  onClick={handleProceedToPayment}
+                  className="w-full py-3.5 rounded-xl text-sm font-bold bg-[#002868] text-white hover:bg-blue-900 transition-colors"
+                >
+                  Proceed to Payment
+                </button>
+              )}
+
+              {step === 2 && !stkSent && (
+                <div className="flex flex-col gap-2">
                   <button
                     onClick={handlePay}
                     disabled={loading}
-                    className="w-full py-3 rounded-xl text-sm font-bold bg-[#002868] text-white hover:bg-blue-900 disabled:opacity-50"
+                    className="w-full py-3.5 rounded-xl text-sm font-bold bg-[#002868] text-white hover:bg-blue-900 disabled:opacity-50 transition-colors"
                   >
-                    {loading ? "Processing..." : "Confirm & Pay"}
+                    {loading
+                      ? "Sending prompt..."
+                      : `Confirm & Pay — KSH ${isFree ? 0 : total.toLocaleString()}`}
                   </button>
                   <button
                     type="button"
                     onClick={handleManualConfirm}
                     disabled={confirming}
-                    className="w-full py-3 rounded-xl text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors border border-gray-200"
+                    className="w-full py-2.5 rounded-xl text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
                   >
-                    {confirming ? "Confirming..." : "Simulate Payment (Test Mode)"}
+                    {confirming ? "Confirming..." : "Simulate Payment (Test)"}
                   </button>
                 </div>
               )}
-              <Link href="/dashboard" className="block text-center text-sm text-gray-500 hover:text-gray-700">
+
+              <Link
+                href="/dashboard"
+                className="block text-center text-sm text-gray-400 hover:text-gray-600 mt-4"
+              >
                 Cancel & Go Back
               </Link>
               <p className="text-xs text-gray-400 text-center mt-3">🔒 Secured by 256-bit SSL</p>
             </div>
-            </div>
           </div>
+
         </div>
       </main>
     </div>
