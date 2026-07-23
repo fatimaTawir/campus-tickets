@@ -79,14 +79,6 @@ export default function PayPage() {
       setStkSent(true)
       setStep(3)
 
-      // Simulate the phone prompt for testing
-      setTimeout(() => {
-        const pin = window.prompt(`[SIMULATION] Safaricom STK Push\n\nDo you want to pay KSH ${amount} to CampusTickets?\n\nEnter your M-Pesa PIN:`)
-        if (pin) {
-          handleManualConfirm()
-        }
-      }, 1500)
-
       // Auto-poll for payment confirmation every 5s for 2 minutes
       let attempts = 0
       const interval = setInterval(async () => {
