@@ -9,18 +9,11 @@ export interface UserPayload {
 }
 
 export async function getCurrentUser(): Promise<UserPayload | null> {
-  const mockUser: UserPayload = {
-    userId: 1,
-    email: 'student@usiu.ac.ke',
-    role: 'student',
-    firstName: 'Student'
-  }
-
   try {
     const cookieStore = await cookies()
     const token = cookieStore.get('token')?.value
 
-    if (!token) return mockUser
+    if (!token) return null
 
     const secret = process.env.JWT_SECRET || 'usiu_campus_tickets_secret_key_2026'
     const decoded = jwt.verify(token, secret) as UserPayload

@@ -89,12 +89,13 @@ export default async function Home({
             Help
           </Link>
 
+          {/* Notification Bell */}
+          <Link href={user ? "/dashboard/notifications" : "/login"} className="relative p-1 text-blue-100 hover:text-white transition-colors mr-2">
+            <Bell className="w-5 h-5" />
+          </Link>
+
           {user ? (
             <>
-              {/* Notification Bell */}
-              <Link href="/dashboard/notifications" className="relative p-1 text-blue-100 hover:text-white transition-colors">
-                <Bell className="w-5 h-5" />
-              </Link>
               {/* User profile dropdown action */}
               <Link href="/dashboard" className="flex items-center gap-2 bg-[#001f52] px-3.5 py-1.5 rounded-full cursor-pointer hover:bg-[#001840] transition-colors border border-blue-800">
                 <div className="w-6 h-6 bg-[#f0b429] rounded-full flex items-center justify-center text-[#002868] text-xs font-bold">
@@ -106,7 +107,7 @@ export default async function Home({
           ) : (
             <>
               <Link href="/login" className="text-blue-100 hover:text-white text-sm font-medium transition-colors">
-                Sign in
+                Log in
               </Link>
               <Link
                 href="/signup"

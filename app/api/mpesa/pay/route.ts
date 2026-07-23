@@ -50,6 +50,13 @@ export async function POST(request: NextRequest) {
   try {
     const { phone, amount, ticketId, eventTitle } = await request.json()
 
+    if (!process.env.MPESA_CONSUMER_KEY || !process.env.MPESA_CONSUMER_SECRET) {
+      return NextResponse.json(
+        { error: 'M-Pesa API keys are missing in .env.local. Please add MPESA_CONSUMER_KEY and MPESA_CONSUMER_SECRET to test the STK prompt.' },
+        { status: 500 }
+      )
+    }
+
     if (!phone || !amount || !ticketId) {
       return NextResponse.json(
         { error: 'Phone, amount and ticket ID are required' },
