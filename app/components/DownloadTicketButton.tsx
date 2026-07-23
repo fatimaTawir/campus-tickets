@@ -8,8 +8,10 @@ type Props = {
   eventDate: string
   eventVenue: string
   studentName: string
+  studentEmail?: string
   qrCode: string
   bookingRef: string
+  quantity?: number
 }
 
 export default function DownloadTicketButton({
