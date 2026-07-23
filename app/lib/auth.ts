@@ -20,6 +20,6 @@ export async function getCurrentUser(): Promise<UserPayload | null> {
     return decoded
 
   } catch (error) {
-    return mockUser
+    return null
   }
 }
