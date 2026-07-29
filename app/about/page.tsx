@@ -53,7 +53,7 @@ export default function AboutPage() {
           </h2>
           <p className="text-blue-200">
             We make it easy for USIU-Africa students to discover, register, and
-            attend campus events — from academic conferences to sports days and
+            attend campus events from academic conferences to sports days and
             cultural nights.
           </p>
         </div>
