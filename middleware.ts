@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import jwt from 'jsonwebtoken'
+import { jwtVerify } from 'jose'
 
 const PROTECTED_PATHS = [
   '/dashboard',
@@ -26,7 +26,7 @@ export async function middleware(request: NextRequest) {
   try {
     const secret = process.env.JWT_SECRET
     if (!secret) throw new Error('JWT_SECRET environment variable is not set')
-    jwt.verify(token, secret)
+    await jwtVerify(token, new TextEncoder().encode(secret))
     // Token is valid — pass the request through, forwarding the cookie
     return NextResponse.next()
   } catch {

@@ -6,9 +6,9 @@ const pool = new Pool({
   max: 10,
   idleTimeoutMillis: 10000,
   connectionTimeoutMillis: 10000,
-  ssl: {
+  ssl: process.env.NODE_ENV === 'production' ? {
     rejectUnauthorized: false
-  }
+  } : false
 })
 
 const rawQuery = pool.query.bind(pool)
