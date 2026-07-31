@@ -171,9 +171,9 @@ export default function PayPage() {
           </div>
         </nav>
         <div className="px-4 py-4 border-t border-gray-100">
-          <Link href="/api/auth/logout" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 text-sm">
+          <a href="/api/auth/logout" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 text-sm">
             <LogOut className="w-4 h-4" /> Sign out
-          </Link>
+          </a>
         </div>
       </aside>
 

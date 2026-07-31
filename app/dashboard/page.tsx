@@ -153,12 +153,12 @@ export default async function DashboardPage() {
             </div>
             <p className="text-[11px] text-blue-300">Priority booking &amp; exclusive events</p>
           </Link>
-          <Link
+          <a
             href="/api/auth/logout"
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 text-sm w-full transition-colors"
           >
             <LogOut className="w-4 h-4" /> Sign out
-          </Link>
+          </a>
         </div>
       </aside>
 

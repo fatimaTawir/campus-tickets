@@ -134,12 +134,12 @@ export default function OrganizerSidebar({ initials, firstName }: OrganizerSideb
             <p className="text-[11px] text-gray-500">Get USIU-A Pro features</p>
           </Link>
 
-          <Link
+          <a
             href="/api/auth/logout"
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-600 hover:bg-red-50 text-sm font-medium transition-colors"
           >
             <LogOut className="w-4 h-4" /> Sign out
-          </Link>
+          </a>
         </div>
       </aside>
     </>

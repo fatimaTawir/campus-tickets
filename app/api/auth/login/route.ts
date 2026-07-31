@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 import pool from '@/app/lib/db'
 import { rateLimit } from '@/app/lib/rate-limit'
-import { signToken } from '@/app/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -55,12 +55,19 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const token = await signToken({
-      userId: user.id,
-      email: user.email,
-      role: user.role,
-      firstName: user.first_name,
-    })
+    const secret = process.env.JWT_SECRET
+    if (!secret) throw new Error('JWT_SECRET environment variable is not set')
+
+    const token = jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+        firstName: user.first_name,
+      },
+      secret,
+      { expiresIn: '7d' }
+    )
 
     const isProduction = process.env.NODE_ENV === 'production'
 

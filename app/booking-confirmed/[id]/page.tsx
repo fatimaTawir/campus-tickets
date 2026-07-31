@@ -95,12 +95,12 @@ export default async function BookingConfirmedPage({ params }: { params: Promise
             <p className="text-xs font-bold text-[#002868]"><Star className="w-4 h-4 fill-current inline mr-1" />UPGRADE</p>
             <p className="text-xs text-gray-500">Get Pro features</p>
           </div>
-          <Link
+          <a
             href="/api/auth/logout"
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 text-sm w-full"
           >
             <LogOut className="w-4 h-4" /> Sign out
-          </Link>
+          </a>
         </div>
       </aside>
 

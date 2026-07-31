@@ -53,7 +53,7 @@ export default async function UpgradePage() {
             <p className="text-xs font-bold text-[#002868]"><Star className="w-4 h-4 fill-current" /> UPGRADE</p>
             <p className="text-xs text-gray-500">Get Pro features</p>
           </Link>
-          <Link href="/api/auth/logout" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 text-sm"><LogOut className="w-4 h-4" /> Sign out</Link>
+          <a href="/api/auth/logout" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 text-sm"><LogOut className="w-4 h-4" /> Sign out</a>
         </div>
       </aside>
 

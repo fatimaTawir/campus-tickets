@@ -92,12 +92,12 @@ export default async function Home({
               <Link href="/dashboard" className="text-blue-100 hover:text-white text-sm font-medium transition-colors">
                 Dashboard
               </Link>
-              <Link
+              <a
                 href="/api/auth/logout"
                 className="bg-[#BF0A30] text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-red-700 transition-all shadow-md"
               >
                 Sign out
-              </Link>
+              </a>
             </>
           ) : (
             <>
