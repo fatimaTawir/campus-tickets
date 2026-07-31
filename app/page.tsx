@@ -129,7 +129,7 @@ export default async function Home({
         </h2>
 
         <p className="text-blue-200 text-base md:text-lg mb-8 max-w-2xl font-light">
-          Buy tickets for USIU-A events — sports, conferences, culture &amp; more.
+          Buy tickets for USIU-A events sports, conferences, culture &amp; more.
         </p>
 
         <div className="w-full max-w-xl mb-6">
