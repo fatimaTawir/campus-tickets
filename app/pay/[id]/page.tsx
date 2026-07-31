@@ -418,16 +418,8 @@ export default function PayPage() {
                     className="w-full py-3.5 rounded-xl text-sm font-bold bg-[#002868] text-white hover:bg-blue-900 disabled:opacity-50 transition-colors"
                   >
                     {loading
-                      ? "Sending prompt..."
+                      ? 'Sending prompt...'
                       : `Confirm & Pay — KSH ${isFree ? 0 : total.toLocaleString()}`}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleManualConfirm}
-                    disabled={confirming}
-                    className="w-full py-2.5 rounded-xl text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
-                  >
-                    {confirming ? "Confirming..." : "Simulate Payment (Test)"}
                   </button>
                 </div>
               )}

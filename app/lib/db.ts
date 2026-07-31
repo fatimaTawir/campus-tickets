@@ -3,7 +3,7 @@ import { Pool, type QueryConfig, type QueryResult, type QueryResultRow } from 'p
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  max: 1,
+  max: 10,
   idleTimeoutMillis: 10000,
   connectionTimeoutMillis: 10000,
   ssl: {

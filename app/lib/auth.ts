@@ -15,7 +15,8 @@ export async function getCurrentUser(): Promise<UserPayload | null> {
 
     if (!token) return null
 
-    const secret = process.env.JWT_SECRET || 'usiu_campus_tickets_secret_key_2026'
+    const secret = process.env.JWT_SECRET
+    if (!secret) throw new Error('JWT_SECRET environment variable is not set')
     const decoded = jwt.verify(token, secret) as UserPayload
     return decoded
 

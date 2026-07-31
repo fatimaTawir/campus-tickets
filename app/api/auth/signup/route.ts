@@ -2,10 +2,26 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import pool from '@/app/lib/db'
+import { rateLimit } from '@/app/lib/rate-limit'
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export async function POST(request: NextRequest) {
   try {
-    const { firstName, lastName, email, studentId, password, role } = await request.json()
+    // Rate-limit: 5 signups per IP per hour
+    const ip =
+      request.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
+      request.headers.get('x-real-ip') ??
+      'unknown'
+    const rl = rateLimit(`signup:${ip}`, 5, 60 * 60 * 1000)
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many signup attempts. Please try again later.' },
+        { status: 429 }
+      )
+    }
+
+    const { firstName, lastName, email, studentId, password } = await request.json()
 
     if (!firstName || !lastName || !email || !password) {
       return NextResponse.json(
@@ -14,9 +30,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    if (!EMAIL_REGEX.test(email)) {
+      return NextResponse.json(
+        { error: 'Please enter a valid email address' },
+        { status: 400 }
+      )
+    }
+
+    if (password.length < 8) {
+      return NextResponse.json(
+        { error: 'Password must be at least 8 characters' },
+        { status: 400 }
+      )
+    }
+
     const existingUser = await pool.query(
       'SELECT id FROM users WHERE email = $1',
-      [email]
+      [email.toLowerCase().trim()]
     )
 
     if (existingUser.rows.length > 0) {
@@ -28,16 +58,19 @@ export async function POST(request: NextRequest) {
 
     const passwordHash = await bcrypt.hash(password, 12)
 
+    // Role is ALWAYS 'student' — never trust the client-supplied role
     const result = await pool.query(
       `INSERT INTO users (first_name, last_name, email, student_id, password_hash, role)
        VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING id, first_name, last_name, email, role`,
-      [firstName, lastName, email, studentId || null, passwordHash, role || 'student']
+      [firstName.trim(), lastName.trim(), email.toLowerCase().trim(), studentId || null, passwordHash, 'student']
     )
 
     const newUser = result.rows[0]
 
-    const secret = process.env.JWT_SECRET || 'usiu_campus_tickets_secret_key_2026'
+    const secret = process.env.JWT_SECRET
+    if (!secret) throw new Error('JWT_SECRET environment variable is not set')
+
     const token = jwt.sign(
       {
         userId: newUser.id,
@@ -46,21 +79,22 @@ export async function POST(request: NextRequest) {
         firstName: newUser.first_name,
       },
       secret,
-      { expiresIn: '30d' }
+      { expiresIn: '7d' }
     )
+
+    const isProduction = process.env.NODE_ENV === 'production'
 
     const response = NextResponse.json({
       message: 'Account created successfully!',
-      token: token,
       user: newUser
     }, { status: 201 })
 
     response.cookies.set('token', token, {
-      httpOnly: false,
-      secure: false,
+      httpOnly: true,
+      secure: isProduction,
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 30
+      maxAge: 60 * 60 * 24 * 7, // 7 days
     })
 
     return response

@@ -2,9 +2,28 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import pool from '@/app/lib/db'
+import { rateLimit } from '@/app/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate-limit: 10 login attempts per IP per 15 minutes
+    const ip =
+      request.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
+      request.headers.get('x-real-ip') ??
+      'unknown'
+    const rl = rateLimit(`login:${ip}`, 10, 15 * 60 * 1000)
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many login attempts. Please try again later.' },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)),
+          },
+        }
+      )
+    }
+
     const { email, password } = await request.json()
 
     if (!email || !password) {
@@ -36,7 +55,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const secret = process.env.JWT_SECRET || 'usiu_campus_tickets_secret_key_2026'
+    const secret = process.env.JWT_SECRET
+    if (!secret) throw new Error('JWT_SECRET environment variable is not set')
+
     const token = jwt.sign(
       {
         userId: user.id,
@@ -45,12 +66,13 @@ export async function POST(request: NextRequest) {
         firstName: user.first_name,
       },
       secret,
-      { expiresIn: '30d' }
+      { expiresIn: '7d' }
     )
+
+    const isProduction = process.env.NODE_ENV === 'production'
 
     const response = NextResponse.json({
       message: 'Login successful!',
-      token: token,
       user: {
         id: user.id,
         firstName: user.first_name,
@@ -60,11 +82,11 @@ export async function POST(request: NextRequest) {
     }, { status: 200 })
 
     response.cookies.set('token', token, {
-      httpOnly: false,
-      secure: false,
+      httpOnly: true,
+      secure: isProduction,
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 30
+      maxAge: 60 * 60 * 24 * 7, // 7 days
     })
 
     return response

@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import pool from '@/app/lib/db'
+import { getCurrentUser } from '@/app/lib/auth'
 
 async function getMpesaToken() {
   const auth = Buffer.from(
@@ -13,7 +15,7 @@ async function getMpesaToken() {
       'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
       {
         method: 'GET',
-        headers: { 
+        headers: {
           Authorization: `Basic ${auth}`,
           'Accept': 'application/json',
           'Cache-Control': 'no-cache',
@@ -22,23 +24,18 @@ async function getMpesaToken() {
       }
     )
 
-    clearTimeout(timeout)
-
-    console.log('Response status:', response.status)
     const text = await response.text()
-    console.log('Token response body:', text)
-    console.log('Token response length:', text.length)
 
     if (!text || text.trim() === '') {
       throw new Error(`Empty response from Safaricom. Status: ${response.status}`)
     }
 
     const data = JSON.parse(text)
-    
+
     if (!data.access_token) {
-      throw new Error(`No access token. Response: ${text}`)
+      throw new Error(`No access token in Safaricom response`)
     }
-    
+
     return data.access_token
 
   } finally {
@@ -48,12 +45,30 @@ async function getMpesaToken() {
 
 export async function POST(request: NextRequest) {
   try {
+    // Require authentication
+    const user = await getCurrentUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    }
+
     const { phone, amount, ticketId, eventTitle } = await request.json()
 
     if (!phone || !amount || !ticketId) {
       return NextResponse.json(
         { error: 'Phone, amount and ticket ID are required' },
         { status: 400 }
+      )
+    }
+
+    // Verify the ticket belongs to the authenticated user
+    const ticketCheck = await pool.query(
+      'SELECT id FROM tickets WHERE id = $1 AND user_id = $2',
+      [ticketId, Number(user.userId)]
+    )
+    if (ticketCheck.rows.length === 0) {
+      return NextResponse.json(
+        { error: 'Ticket not found or access denied' },
+        { status: 403 }
       )
     }
 
@@ -65,9 +80,7 @@ export async function POST(request: NextRequest) {
       formattedPhone = formattedPhone.slice(1)
     }
 
-    console.log('Getting M-Pesa token...')
     const token = await getMpesaToken()
-    console.log('Token obtained successfully')
 
     const now = new Date()
     const timestamp = now.getFullYear().toString() +
@@ -80,8 +93,6 @@ export async function POST(request: NextRequest) {
     const shortcode = process.env.MPESA_SHORTCODE!
     const passkey = process.env.MPESA_PASSKEY!
     const password = Buffer.from(shortcode + passkey + timestamp).toString('base64')
-
-    console.log('Sending STK push to:', formattedPhone)
 
     const stkResponse = await fetch(
       'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest',
@@ -108,7 +119,6 @@ export async function POST(request: NextRequest) {
     )
 
     const stkText = await stkResponse.text()
-    console.log('STK response:', stkText)
 
     if (!stkText || stkText.trim() === '') {
       return NextResponse.json(
@@ -125,7 +135,7 @@ export async function POST(request: NextRequest) {
         checkoutRequestId: stkData.CheckoutRequestID,
       })
     } else {
-      console.error('STK push failed:', JSON.stringify(stkData))
+      console.error('STK push failed:', stkData.errorMessage || stkData.ResultDesc)
       return NextResponse.json(
         { error: `Payment failed: ${stkData.errorMessage || stkData.ResultDesc || 'Unknown error'}` },
         { status: 400 }
