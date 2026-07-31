@@ -97,9 +97,9 @@ export default function SignupPage() {
             <div className="w-16 h-16 bg-[#BF0A30] text-white rounded-2xl flex items-center justify-center mx-auto mb-4 text-sm font-black shadow-md border-2 border-red-800">
               USIU-A
             </div>
-            <p className="text-xs font-bold text-[#BF0A30] uppercase tracking-widest mb-1">USIU-A</p>
+          
             <h2 className="text-2xl font-bold text-gray-800">Create your account</h2>
-            <p className="text-gray-500 text-sm mt-1">Join CampusTickets — some are free.</p>
+            <p className="text-gray-500 text-sm mt-1">Join CampusTickets some are free.</p>
           </div>
 
           {/* Role selector */}
