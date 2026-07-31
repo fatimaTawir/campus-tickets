@@ -25,10 +25,19 @@ export default function PayPage() {
     async function loadTicket() {
       try {
         const response = await fetch('/api/my-tickets')
+        if (response.status === 401) {
+          router.push(`/login?redirect=/pay/${ticketId}`)
+          return
+        }
         const data = await response.json()
         if (data.tickets) {
           const match = data.tickets.find((t: any) => String(t.id) === String(ticketId))
-          if (match) setTicketDetails(match)
+          if (match) {
+            setTicketDetails(match)
+          } else {
+            // Ticket doesn't belong to this user
+            router.push('/dashboard')
+          }
         }
       } catch (err) {
         console.error(err)
