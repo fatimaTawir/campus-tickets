@@ -3,6 +3,10 @@ import pool from '@/app/lib/db'
 import { getCurrentUser } from '@/app/lib/auth'
 
 async function getMpesaToken() {
+  if (process.env.MPESA_SANDBOX === 'true') {
+    return 'mock-sandbox-token-12345';
+  }
+
   const auth = Buffer.from(
     `${process.env.MPESA_CONSUMER_KEY}:${process.env.MPESA_CONSUMER_SECRET}`
   ).toString('base64')
@@ -94,40 +98,49 @@ export async function POST(request: NextRequest) {
     const passkey = process.env.MPESA_PASSKEY!
     const password = Buffer.from(shortcode + passkey + timestamp).toString('base64')
 
-    const stkResponse = await fetch(
-      'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          BusinessShortCode: shortcode,
-          Password: password,
-          Timestamp: timestamp,
-          TransactionType: 'CustomerPayBillOnline',
-          Amount: amount,
-          PartyA: formattedPhone,
-          PartyB: shortcode,
-          PhoneNumber: formattedPhone,
-          CallBackURL: process.env.MPESA_CALLBACK_URL,
-          AccountReference: `CampusTickets-${ticketId}`,
-          TransactionDesc: `Ticket for ${eventTitle}`,
-        }),
-      }
-    )
+    let stkData;
 
-    const stkText = await stkResponse.text()
-
-    if (!stkText || stkText.trim() === '') {
-      return NextResponse.json(
-        { error: 'No response from Safaricom STK push' },
-        { status: 500 }
+    if (process.env.MPESA_SANDBOX === 'true') {
+      stkData = {
+        ResponseCode: '0',
+        CheckoutRequestID: `ws_CO_${Math.floor(Math.random() * 1000000)}`,
+        CustomerMessage: 'Success. Request accepted for processing'
+      };
+    } else {
+      const stkResponse = await fetch(
+        'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            BusinessShortCode: shortcode,
+            Password: password,
+            Timestamp: timestamp,
+            TransactionType: 'CustomerPayBillOnline',
+            Amount: amount,
+            PartyA: formattedPhone,
+            PartyB: shortcode,
+            PhoneNumber: formattedPhone,
+            CallBackURL: process.env.MPESA_CALLBACK_URL,
+            AccountReference: `CampusTickets-${ticketId}`,
+            TransactionDesc: `Ticket for ${eventTitle}`,
+          }),
+        }
       )
-    }
 
-    const stkData = JSON.parse(stkText)
+      const stkText = await stkResponse.text()
+
+      if (!stkText || stkText.trim() === '') {
+        return NextResponse.json(
+          { error: 'No response from Safaricom STK push' },
+          { status: 500 }
+        )
+      }
+      stkData = JSON.parse(stkText)
+    }
 
     if (stkData.ResponseCode === '0') {
       return NextResponse.json({
@@ -142,10 +155,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('M-Pesa error:', error)
     return NextResponse.json(
-      { error: 'Payment failed. Please try again.' },
+      { error: error.message || 'Payment failed. Please try again.' },
       { status: 500 }
     )
   }
