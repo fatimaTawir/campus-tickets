@@ -29,7 +29,8 @@ export async function middleware(request: NextRequest) {
     await jwtVerify(token, new TextEncoder().encode(secret))
     // Token is valid — pass the request through, forwarding the cookie
     return NextResponse.next()
-  } catch {
+  } catch (error) {
+    console.error('Middleware JWT verification failed:', error)
     // Token invalid/expired — clear it and redirect to login
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('redirect', pathname)

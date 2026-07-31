@@ -21,6 +21,7 @@ export async function getCurrentUser(): Promise<UserPayload | null> {
     return decoded
 
   } catch (error) {
+    console.error('Auth verification error:', error)
     return null
   }
 }
