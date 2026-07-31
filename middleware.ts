@@ -31,12 +31,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   } catch (error) {
     console.error('Middleware JWT verification failed:', error)
-    // Token invalid/expired — clear it and redirect to login
+    // Token invalid/expired — redirect to login
+    // Don't clear cookie here; the login page will clear stale cookies after new login
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('redirect', pathname)
-    const response = NextResponse.redirect(loginUrl)
-    response.cookies.set('token', '', { maxAge: 0, path: '/' })
-    return response
+    return NextResponse.redirect(loginUrl)
   }
 }
 
