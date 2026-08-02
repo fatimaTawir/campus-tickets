@@ -353,7 +353,7 @@ export default function PayPage() {
                   className="w-full py-4 rounded-xl text-sm font-bold bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 transition-colors"
                 >
                   <span className="flex items-center justify-center gap-2">
-                    {confirming ? "Confirming..." : <><CheckCircle2 className="w-5 h-5" /> I have paid — View my ticket</>}
+                    {confirming ? "Confirming..." : <><CheckCircle2 className="w-5 h-5" /> I have paidView my ticket</>}
                   </span>
                 </button>
 
