@@ -93,7 +93,7 @@ export default async function UpgradePage() {
             </div>
             <div className="bg-[#002868] rounded-2xl p-6">
               <p className="text-sm font-semibold text-[#f0b429] mb-1 flex items-center justify-center gap-1">Pro <Star className="w-4 h-4 fill-current" /></p>
-              <p className="text-3xl font-bold text-white mb-4">KES 500<span className="text-sm font-normal text-blue-300">/month</span></p>
+              <p className="text-3xl font-bold text-white mb-4">KES 3000<span className="text-sm font-normal text-blue-300">/month</span></p>
               <ul className="flex flex-col gap-2 mb-6">
                 {['Everything in Free', 'Unlimited tickets', 'Priority support', 'Early access to events', 'Download PDF tickets', 'Exclusive Pro badge'].map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm text-blue-100">
